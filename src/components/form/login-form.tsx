@@ -1,9 +1,10 @@
 "use client";
 
 import { Button } from "../ui/button";
-import { Field } from "../ui/field";
+import { Field, FieldError, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { useForm } from "@tanstack/react-form";
+import { loginZSchema } from "@/validation";
 
 export default function LoginForm() {
     const form = useForm({
@@ -11,8 +12,11 @@ export default function LoginForm() {
             email: "",
             password: "",
         },
-        onSubmit: (data) => {
-            console.log("data", data);
+        validators: {
+            onSubmit: loginZSchema,
+        },
+        onSubmit: ({ value }) => {
+            console.log("value", value);
         },
     });
     return (
@@ -27,11 +31,30 @@ export default function LoginForm() {
             >
                 <form.Field name="email">
                     {(field) => {
+                        const isInvalid =
+                            field.state.meta.isTouched &&
+                            !field.state.meta.isValid;
+
                         return (
                             <Field>
+                                <FieldLabel htmlFor={field.name}>
+                                    Email
+                                </FieldLabel>
                                 <Input
+                                    id={field.name}
                                     name={field.name}
+                                    onChange={(e) => {
+                                        field.handleChange(e.target.value);
+                                    }}
+                                    value={field.state.value}
+                                    onBlur={field.handleBlur}
+                                    autoComplete="off"
                                 />
+                                {isInvalid && (
+                                    <FieldError
+                                        errors={field.state.meta.errors}
+                                    />
+                                )}
                             </Field>
                         );
                     }}
