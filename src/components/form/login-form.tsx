@@ -13,7 +13,7 @@ import { useForm } from "@tanstack/react-form";
 import { loginZSchema } from "@/validation";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-import { useLogin } from "@/hooks";
+import { useGoogleOAuth, useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
@@ -24,6 +24,7 @@ export default function LoginForm() {
     const router = useRouter();
 
     const { mutate: login, isPending: loginPending } = useLogin();
+    const { mutate: googleLogin } = useGoogleOAuth();
 
     const form = useForm({
         defaultValues: {
@@ -65,6 +66,51 @@ export default function LoginForm() {
             });
         },
     });
+
+    const handleGoogleSuccess = (credentialResponse: {
+        credential?: string;
+    }) => {
+        const idToken = credentialResponse.credential;
+        if (!idToken) {
+            toast.add({
+                title: "Google OAuth Failed!",
+                description: "Something Went Wrong. Please Try Again.",
+                type: "error",
+            });
+            return;
+        }
+
+        googleLogin(
+            { idToken },
+            {
+                onSuccess: () => {
+                    toast.add({
+                        title: "Google Login Success",
+                        description: "Welcome Back",
+                        type: "success",
+                    });
+                    router.push("/");
+                },
+                onError: (err) => {
+                    toast.add({
+                        title: "Google OAuth Failed!",
+                        description:
+                            err.message ||
+                            "Something Went Wrong. Please Try Again.",
+                        type: "error",
+                    });
+                },
+            },
+        );
+    };
+    const handleGoogleError = () => {
+        toast.add({
+            title: "Google OAuth Failed!",
+            description: "Something Went Wrong. Please Try Again.",
+            type: "error",
+        });
+    };
+
     return (
         <div className="flex flex-col gap-5">
             <div className="flex flex-col items-center gap-2 text-center">
@@ -179,8 +225,14 @@ export default function LoginForm() {
                     </Button>
                 </FieldGroup>
             </form>
-            <FieldSeparator>OR</FieldSeparator>
-            <GoogleLogin onSuccess={() => {}} onError={() => {}} />
+            <FieldSeparator>Or Continue With</FieldSeparator>
+            <GoogleLogin
+                theme="outline"
+                shape="pill"
+                text="continue_with"
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+            />
         </div>
     );
 }

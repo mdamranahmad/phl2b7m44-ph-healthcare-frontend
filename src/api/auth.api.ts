@@ -17,6 +17,7 @@ export function getMe() {
 
 export function googleOAuth(payload: { idToken: string }) {
     return apiClient("/auth/google", {
+        method: "POST",
         body: payload,
     });
 }
