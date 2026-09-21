@@ -9,6 +9,8 @@ import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
+import { toast } from "../ui/toast";
+import { Spinner } from "../ui/spinner";
 
 export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -36,10 +38,22 @@ export default function LoginForm() {
             login(loginData, {
                 onSuccess: (res) => {
                     // console.log("res", res);
+                    toast.add({
+                        title: "Login Success",
+                        description: "Welcome Back",
+                        type: "success",
+                    });
                     router.push("/");
                 },
                 onError: (err) => {
-                    console.log("error", err);
+                    // console.log("error", err);
+                    toast.add({
+                        title: "Authorization Failure",
+                        description:
+                            err.message ||
+                            "Something Went Wrong! Please Try Again.",
+                        type: "error",
+                    });
                 },
             });
         },
@@ -147,7 +161,15 @@ export default function LoginForm() {
                             );
                         }}
                     </form.Field>
-                    <Button type="submit">Submit</Button>
+                    <Button disabled={loginPending} type="submit">
+                        {/**button will be grayed out if disabled is true, prevent user from multiple submit */}
+                        {loginPending ? (
+                            <Spinner>"Submitting" </Spinner>
+                        ) : (
+                            "Submit"
+                        )}{" "}
+                        {/* dynamin text inside submit box */}
+                    </Button>
                 </FieldGroup>
             </form>
         </div>
