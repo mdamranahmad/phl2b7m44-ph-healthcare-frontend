@@ -1,5 +1,5 @@
-import { getMe, userLogin, userLogout } from "@/api";
-import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import { getMe, googleOAuth, userLogin, userLogout } from "@/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export function useLogin() {
     return useMutation({
@@ -20,6 +20,12 @@ export function useGetMe() {
         queryKey: ["user"], // store the result in cache memory under this tag line, can be used to track the cache
         // queryKey has to be refreshed after each operation by queryInvalidation
         queryFn: getMe,
-        retry: false,       // Tanstack will not retry to fetch the query again
+        retry: false, // Tanstack will not retry to fetch the query again
+    });
+}
+
+export function useGoogleOAuth() {
+    return useMutation({
+        mutationFn: googleOAuth,
     });
 }
