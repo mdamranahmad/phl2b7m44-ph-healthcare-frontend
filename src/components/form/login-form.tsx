@@ -7,20 +7,41 @@ import { useForm } from "@tanstack/react-form";
 import { loginZSchema } from "@/validation";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
+import { useLogin } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter();
+
+    const { mutate: login, isPending: loginPending } = useLogin();
 
     const form = useForm({
         defaultValues: {
-            email: "",
-            password: "",
+            // email: "",
+            // password: "",
+            email: "superadmin01@email.com", // For Test Purpose only
+            password: "Super@admin12345",
         },
         validators: {
             onSubmit: loginZSchema,
         },
         onSubmit: ({ value }) => {
-            console.log("value", value);
+            // console.log("value", value);
+            const loginData = {
+                email: value.email,
+                password: value.password,
+            };
+
+            login(loginData, {
+                onSuccess: (res) => {
+                    // console.log("res", res);
+                    router.push("/");
+                },
+                onError: (err) => {
+                    console.log("error", err);
+                },
+            });
         },
     });
     return (
