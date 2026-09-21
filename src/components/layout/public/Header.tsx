@@ -1,3 +1,4 @@
+import PhHealthcareLogo from "@/assets/svg/Logo";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
@@ -10,7 +11,11 @@ export default function Header() {
     return (
         <header className="w-full h-16 border border-t">
             <div className="flex justify-between items-center h-full max-w-7xl mx-auto">
-                <div>PH HealthCare</div>
+                {/* <div>PH HealthCare</div> */}
+                <div className="flex items-center gap-2">
+                    <PhHealthcareLogo />
+                    <span>PH Healthcare</span>
+                </div>
                 <nav className="flex gap-5">
                     {routes.map((route) => (
                         <Link href={route.url} key={route.url}>
@@ -23,7 +28,9 @@ export default function Header() {
                         variant="outline"
                         render={<Link href="/login">Login</Link>}
                         nativeButton={false}
-                    >Login</Button>
+                    >
+                        Login
+                    </Button>
                 </div>
             </div>
         </header>
