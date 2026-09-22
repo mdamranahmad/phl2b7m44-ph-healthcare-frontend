@@ -12,7 +12,7 @@ import { Input } from "../ui/input";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { Eye, EyeClosed, EyeOff } from "lucide-react";
-import { useGoogleOAuth, useLogin } from "@/hooks";
+import { useGoogleOAuth, useLogin, useRegistration } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
@@ -27,18 +27,23 @@ export default function RegisterForm() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const router = useRouter();
 
-    // const { mutate: login, isPending: loginPending } = useLogin();
-    // const { mutate: googleLogin } = useGoogleOAuth();
+    const { mutate: registration, isPending: registrationPending } =
+        useRegistration();
 
     // Type Infer to handle contactNumber type mismatch
     type PatientDefaultValues = z.infer<typeof patientRegistrationZSchema>;
 
     const defaultValues: PatientDefaultValues = {
-        name: "",
-        email: "",
-        contactNumber: "",
-        password: "",
-        confirmPassword: "",
+        // name: "",
+        // email: "",
+        // contactNumber: "",
+        // password: "",
+        // confirmPassword: "",
+        name: "Patient 01",
+        email: "patient01@email.com",
+        contactNumber: "01912121212",
+        password: "123456Aa",
+        confirmPassword: "123456Aa",
     };
 
     const form = useForm({
@@ -47,7 +52,53 @@ export default function RegisterForm() {
             onSubmit: patientRegistrationZSchema,
         },
         onSubmit: async ({ value }) => {
-            console.log("value", value);
+            // console.log("value", value);
+            const registrationData = {
+                name: value.name,
+                email: value.email,
+                password: value.password,
+                patient: {
+                    contactNumber: value.contactNumber,
+                },
+            };
+            registration(registrationData, {
+                onSuccess: (res) => {
+                    // console.log("res", res);
+
+                    if (!res.success) {
+                        toast.add({
+                            title: "Server Failure",
+                            description:
+                                "Something Went Wrong! Please Try Again.",
+                            type: "error",
+                        });
+                    }
+
+                    toast.add({
+                        title: "Regsitration Successful",
+                        description: "Please verify your email",
+                        type: "success",
+                    });
+
+                    // For test purpose
+                    const params = new URLSearchParams({
+                        email: registrationData.email,
+                    });
+                    router.push(
+                        `/register/verify-account?${params.toString()}`,
+                    );
+                },
+                onError: (err) => {
+                    // console.log("error", err);
+                    toast.add({
+                        title: "Registration Failure",
+                        description:
+                            err.message ||
+                            "Something Went Wrong! Please Try Again.",
+                        type: "error",
+                    });
+                },
+            });
         },
     });
     return (
@@ -302,7 +353,15 @@ export default function RegisterForm() {
                             );
                         }}
                     </form.Field>
-                    <Button type="submit">Submit</Button>
+                    <Button disabled={registrationPending} type="submit">
+                        {/**button will be grayed out if disabled is true, prevent user from multiple submit */}
+                        {registrationPending ? (
+                            <Spinner>"Submitting" </Spinner>
+                        ) : (
+                            "Submit"
+                        )}{" "}
+                        {/* dynamin text inside submit box */}
+                    </Button>
                 </FieldGroup>
             </form>
             <FieldSeparator>Or Continue With</FieldSeparator>
