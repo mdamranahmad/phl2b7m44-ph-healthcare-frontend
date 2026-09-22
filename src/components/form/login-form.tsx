@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
 import { GoogleLogin } from "@react-oauth/google";
+import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 
 export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -67,49 +68,49 @@ export default function LoginForm() {
         },
     });
 
-    const handleGoogleSuccess = (credentialResponse: {
-        credential?: string;
-    }) => {
-        const idToken = credentialResponse.credential;
-        if (!idToken) {
-            toast.add({
-                title: "Google OAuth Failed!",
-                description: "Something Went Wrong. Please Try Again.",
-                type: "error",
-            });
-            return;
-        }
+    // const handleGoogleSuccess = (credentialResponse: {
+    //     credential?: string;
+    // }) => {
+    //     const idToken = credentialResponse.credential;
+    //     if (!idToken) {
+    //         toast.add({
+    //             title: "Google OAuth Failed!",
+    //             description: "Something Went Wrong. Please Try Again.",
+    //             type: "error",
+    //         });
+    //         return;
+    //     }
 
-        googleLogin(
-            { idToken },
-            {
-                onSuccess: () => {
-                    toast.add({
-                        title: "Google Login Success",
-                        description: "Welcome Back",
-                        type: "success",
-                    });
-                    router.push("/");
-                },
-                onError: (err) => {
-                    toast.add({
-                        title: "Google OAuth Failed!",
-                        description:
-                            err.message ||
-                            "Something Went Wrong. Please Try Again.",
-                        type: "error",
-                    });
-                },
-            },
-        );
-    };
-    const handleGoogleError = () => {
-        toast.add({
-            title: "Google OAuth Failed!",
-            description: "Something Went Wrong. Please Try Again.",
-            type: "error",
-        });
-    };
+    //     googleLogin(
+    //         { idToken },
+    //         {
+    //             onSuccess: () => {
+    //                 toast.add({
+    //                     title: "Google Login Success",
+    //                     description: "Welcome Back",
+    //                     type: "success",
+    //                 });
+    //                 router.push("/");
+    //             },
+    //             onError: (err) => {
+    //                 toast.add({
+    //                     title: "Google OAuth Failed!",
+    //                     description:
+    //                         err.message ||
+    //                         "Something Went Wrong. Please Try Again.",
+    //                     type: "error",
+    //                 });
+    //             },
+    //         },
+    //     );
+    // };
+    // const handleGoogleError = () => {
+    //     toast.add({
+    //         title: "Google OAuth Failed!",
+    //         description: "Something Went Wrong. Please Try Again.",
+    //         type: "error",
+    //     });
+    // };
 
     return (
         <div className="flex flex-col gap-5">
@@ -226,13 +227,14 @@ export default function LoginForm() {
                 </FieldGroup>
             </form>
             <FieldSeparator>Or Continue With</FieldSeparator>
-            <GoogleLogin
+            {/* <GoogleLogin
                 theme="outline"
                 shape="pill"
                 text="continue_with"
                 onSuccess={handleGoogleSuccess}
                 onError={handleGoogleError}
-            />
+            /> */}
+            <GoogleLoginComponent />
         </div>
     );
 }
