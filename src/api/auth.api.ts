@@ -1,9 +1,17 @@
 import apiClient from "@/lib/apiClient";
-import { IUserRegistrationPayload } from "@/types";
+import {
+    IUserLoginPayload,
+    IUserRegistrationPayload,
+    IUserVerifyAccountPayload,
+} from "@/types";
 
 // A Function to fetch login api
-export function userLogin(payload: { email: string; password: string }) {
+export function userLogin(payload: IUserLoginPayload) {
     return apiClient("/auth/login", { method: "POST", body: payload });
+}
+// A Function to fetch verify email api
+export function verifyAccount(payload: IUserVerifyAccountPayload) {
+    return apiClient("/auth/verify-email", { method: "POST", body: payload });
 }
 
 // A Function to fetch register api
