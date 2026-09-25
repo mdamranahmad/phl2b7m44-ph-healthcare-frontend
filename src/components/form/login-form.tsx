@@ -13,11 +13,10 @@ import { useForm } from "@tanstack/react-form";
 import { loginZSchema } from "@/validation";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-import { useGoogleOAuth, useLogin } from "@/hooks";
+import { useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
-import { GoogleLogin } from "@react-oauth/google";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import Link from "next/link";
 

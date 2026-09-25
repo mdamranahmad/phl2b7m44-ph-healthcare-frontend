@@ -11,12 +11,11 @@ import {
 import { Input } from "../ui/input";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
-import { Eye, EyeClosed, EyeOff } from "lucide-react";
-import { useGoogleOAuth, useLogin, useRegistration } from "@/hooks";
+import { Eye, EyeOff } from "lucide-react";
+import { useRegistration } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
-import { GoogleLogin } from "@react-oauth/google";
 import Link from "next/link";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import { patientRegistrationZSchema } from "@/validation";
@@ -82,7 +81,7 @@ export default function RegisterForm() {
 
                     // For test purpose
                     const params = new URLSearchParams({
-                        email: registrationData.email,
+                        email: registrationData.email, // Data share among routes using url
                     });
                     router.push(
                         `/register/verify-account?${params.toString()}`,

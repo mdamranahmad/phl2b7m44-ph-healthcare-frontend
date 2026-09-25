@@ -1,8 +1,9 @@
-import LoginForm from "@/components/form/login-form";
-import RegisterForm from "@/components/form/register-form";
+// import VerifyAccountForm from "@/components/form/D-verify-account-form";
+import VerifyAccountForm from "@/components/form/verify-account-form";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default function VerifyEmailPage() {
+export default function VerifyAccountPage() {
     return (
         <div className="grid min-h-svh lg:grid-cols-2">
             <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -16,7 +17,18 @@ export default function VerifyEmailPage() {
                 </div>
                 <div className="flex flex-1 items-center justify-center">
                     <div className="w-full max-w-xs">
-                        <RegisterForm />
+                        {/* <VerifyAccountForm /> */}
+                        {/**
+                         * ERROR FROM BUILD
+                         * ⨯ useSearchParams() should be wrapped in a suspense boundary at page "/register/verify-account".
+                         */}
+                        {/**SLOVED IN THE NEXT LINE */}
+                        <Suspense fallback={<p>Loading...</p>}>
+                            {/**
+                             * Suspense make nextjs to render a fall backup for this part
+                             */}
+                            <VerifyAccountForm />
+                        </Suspense>
                     </div>
                 </div>
             </div>
