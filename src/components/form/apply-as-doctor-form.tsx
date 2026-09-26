@@ -12,7 +12,7 @@ import {
 import { Input } from "../ui/input";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
-import { Eye, EyeOff, FileUp } from "lucide-react";
+import { Eye, EyeOff, FileUp, X } from "lucide-react";
 import { useRegistration } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
@@ -21,6 +21,8 @@ import Link from "next/link";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import {
     isAcceptedFileSize,
+    isAcceptedFileType,
+    MAX_FILE_SIZE,
     MAX_FILE_SIZE_BYTES,
     patientRegistrationZSchema,
 } from "@/validation";
@@ -531,6 +533,7 @@ export default function ApplyAsDoctorForm() {
                             const isInvalid =
                                 field.state.meta.isTouched &&
                                 !field.state.meta.isValid;
+                            const file = field.state.value;
 
                             return (
                                 <Field data-invalid={isInvalid}>
@@ -559,27 +562,43 @@ export default function ApplyAsDoctorForm() {
                                             onChange={(e) => {
                                                 const selected =
                                                     e.target.files?.[0] ?? null;
-                                                if (!selected) {
-                                                    field.handleChange(null);
-                                                    field.handleBlur();
-                                                    e.target.value = "";
-                                                    return;
-                                                }
+
                                                 if (
-                                                    selected &&
-                                                    !isAcceptedFileSize(
-                                                        selected?.size,
+                                                    (selected &&
+                                                        !isAcceptedFileSize(
+                                                            selected?.size,
+                                                        )) ||
+                                                    !isAcceptedFileType(
+                                                        selected?.type as string,
                                                     )
                                                 ) {
-                                                    field.handleChange(null);
                                                     field.handleBlur();
-                                                    e.target.value = "";
                                                     return;
                                                 }
                                                 field.handleChange(selected);
                                                 e.target.value = "";
                                             }}
                                         />
+                                        {file ? (
+                                            <div className="inline-flex">
+                                                <span>{file.name}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        field.handleChange(null)
+                                                    }
+                                                >
+                                                    <X />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <span>
+                                                {" "}
+                                                Supported File: .pdf, .doc,
+                                                .dox, .png, .jpg ans size{" "}
+                                                {MAX_FILE_SIZE}MB
+                                            </span>
+                                        )}
                                     </div>
 
                                     {isInvalid && (
