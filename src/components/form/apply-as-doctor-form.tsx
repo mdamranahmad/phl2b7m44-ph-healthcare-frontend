@@ -19,7 +19,11 @@ import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
 import Link from "next/link";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
-import { patientRegistrationZSchema } from "@/validation";
+import {
+    isAcceptedFileSize,
+    MAX_FILE_SIZE_BYTES,
+    patientRegistrationZSchema,
+} from "@/validation";
 import z from "zod";
 import { Textarea } from "../ui/textarea";
 
@@ -550,9 +554,32 @@ export default function ApplyAsDoctorForm() {
                                         <Input
                                             id="resume-field"
                                             type="file"
-                                            name={field.name}
                                             className="sr-only"
-                                        ></Input>
+                                            name={field.name}
+                                            onChange={(e) => {
+                                                const selected =
+                                                    e.target.files?.[0] ?? null;
+                                                if (!selected) {
+                                                    field.handleChange(null);
+                                                    field.handleBlur();
+                                                    e.target.value = "";
+                                                    return;
+                                                }
+                                                if (
+                                                    selected &&
+                                                    !isAcceptedFileSize(
+                                                        selected?.size,
+                                                    )
+                                                ) {
+                                                    field.handleChange(null);
+                                                    field.handleBlur();
+                                                    e.target.value = "";
+                                                    return;
+                                                }
+                                                field.handleChange(selected);
+                                                e.target.value = "";
+                                            }}
+                                        />
                                     </div>
 
                                     {isInvalid && (
