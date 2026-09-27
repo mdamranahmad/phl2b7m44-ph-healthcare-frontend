@@ -7,12 +7,11 @@ import {
     FieldError,
     FieldGroup,
     FieldLabel,
-    FieldSeparator,
 } from "../ui/field";
 import { Input } from "../ui/input";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
-import { Eye, EyeOff, FileUp, X } from "lucide-react";
+import { Eye, EyeOff, FileText, FileUp, X } from "lucide-react";
 import { useRegistration } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
@@ -26,8 +25,8 @@ import {
     MAX_FILE_SIZE_BYTES,
     patientRegistrationZSchema,
 } from "@/validation";
-import z from "zod";
 import { Textarea } from "../ui/textarea";
+import { formatFileSize } from "@/utils";
 
 export default function ApplyAsDoctorForm() {
     // const [showPassword, setShowPassword] = useState(false);
@@ -70,6 +69,7 @@ export default function ApplyAsDoctorForm() {
         consultationFee: "",
         bio: "",
         resume: null as File | null,
+        additionalFiles: [] as File[],
     };
 
     const form = useForm({
@@ -540,7 +540,7 @@ export default function ApplyAsDoctorForm() {
                                     <FieldLabel htmlFor="resume-field">
                                         Resume
                                     </FieldLabel>
-                                    <div>
+                                    <div className="flex gap-2">
                                         <Button
                                             render={
                                                 <label htmlFor="resume-field" />
@@ -580,8 +580,14 @@ export default function ApplyAsDoctorForm() {
                                             }}
                                         />
                                         {file ? (
-                                            <div className="inline-flex">
-                                                <span>{file.name}</span>
+                                            <span className="inline-flex max-w-full items-center gap-2 rounded-lg bg-muted px-2.5 py-1 text-sm">
+                                                <FileText className="size-4 shrink-0 text-primary" />
+                                                <span className="truncate">
+                                                    {file.name}
+                                                </span>
+                                                <span className="text-xs text-muted-foreground">
+                                                    {formatFileSize(file.size)}
+                                                </span>
                                                 <button
                                                     type="button"
                                                     onClick={() =>
@@ -590,7 +596,7 @@ export default function ApplyAsDoctorForm() {
                                                 >
                                                     <X />
                                                 </button>
-                                            </div>
+                                            </span>
                                         ) : (
                                             <span>
                                                 {" "}
@@ -599,6 +605,110 @@ export default function ApplyAsDoctorForm() {
                                                 {MAX_FILE_SIZE}MB
                                             </span>
                                         )}
+                                    </div>
+
+                                    {isInvalid && (
+                                        <FieldError
+                                            errors={field.state.meta.errors}
+                                        />
+                                    )}
+                                </Field>
+                            );
+                        }}
+                    </form.Field>
+                    <form.Field name="additionalFiles">
+                        {(field) => {
+                            const isInvalid =
+                                field.state.meta.isTouched &&
+                                !field.state.meta.isValid;
+                            const files = field.state.value;
+
+                            return (
+                                <Field data-invalid={isInvalid}>
+                                    <FieldLabel htmlFor="additional-file-field">
+                                        Additional Files
+                                    </FieldLabel>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            render={
+                                                <label htmlFor="additional-file-field" />
+                                            }
+                                            nativeButton={false}
+                                            variant="outline"
+                                        >
+                                            <FileUp size="4" />
+                                            <label htmlFor="additional-file-field">
+                                                Upload Additional Files
+                                            </label>
+                                        </Button>
+
+                                        <Input
+                                            id="additional-file-field"
+                                            type="file"
+                                            multiple
+                                            className="sr-only"
+                                            name={field.name}
+                                            onChange={(e) => {
+                                                const incoming = Array.from(
+                                                    e.target.files ?? [],
+                                                );
+                                                if (incoming.length === 0) {
+                                                    return;
+                                                }
+
+                                                const invalid = incoming.some(
+                                                    (file) => {
+                                                        !isAcceptedFileSize(
+                                                            file.size,
+                                                        ) ||
+                                                            !isAcceptedFileType(
+                                                                file.type,
+                                                            );
+                                                    },
+                                                );
+
+                                                if (invalid) {
+                                                    field.handleBlur();
+                                                    e.target.value = "";
+                                                    return;
+                                                }
+                                                // console.log([
+                                                //     ...files,
+                                                //     ...incoming,
+                                                // ]);
+
+                                                field.handleChange([
+                                                    ...files,
+                                                    ...incoming,
+                                                ]);
+                                            }}
+                                        />
+                                        {/* {file ? (
+                                            <span className="inline-flex max-w-full items-center gap-2 rounded-lg bg-muted px-2.5 py-1 text-sm">
+                                                <FileText className="size-4 shrink-0 text-primary" />
+                                                <span className="truncate">
+                                                    {file.name}
+                                                </span>
+                                                <span className="text-xs text-muted-foreground">
+                                                    {formatFileSize(file.size)}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        field.handleChange(null)
+                                                    }
+                                                >
+                                                    <X />
+                                                </button>
+                                            </span>
+                                        ) : (
+                                            <span>
+                                                {" "}
+                                                Supported File: .pdf, .doc,
+                                                .dox, .png, .jpg ans size{" "}
+                                                {MAX_FILE_SIZE}MB
+                                            </span>
+                                        )} */}
                                     </div>
 
                                     {isInvalid && (
