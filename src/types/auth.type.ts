@@ -17,15 +17,15 @@ export interface IUserVerifyAccountPayload {
     otp: string;
 }
 
-export interface IDoctorApplicationPayload {
-    name: string;
-    email: string;
-    contactNumber: string;
-    address: string;
-    specialization: string;
-    licenseNumber: string;
-    qualifications: string;
-    experienceYears: string;
-    consultationFee: string;
-    bio: string;
-}
+// export interface IDoctorApplicationPayload {
+//     name: string;
+//     email: string;
+//     contactNumber: string;
+//     address: string;
+//     specialization: string;
+//     licenseNumber: string;
+//     qualifications: string;
+//     experienceYears: string;
+//     consultationFee: string;
+//     bio: string;
+// }

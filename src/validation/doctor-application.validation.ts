@@ -2,6 +2,8 @@ export const MAX_FILE_SIZE = 5;
 
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE * 1024 * 1024;
 
+export const MAX_ADDITIONAL_FILES = 5;
+
 export const ACCEPTED_FILE_TYPES = [
     "application/pdf",
     "application/msword",

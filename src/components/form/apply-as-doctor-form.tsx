@@ -11,8 +11,8 @@ import {
 import { Input } from "../ui/input";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
-import { Eye, EyeOff, FileText, FileUp, X } from "lucide-react";
-import { useRegistration } from "@/hooks";
+import { Eye, EyeOff, FileText, FileUp, Plus, X } from "lucide-react";
+import { useApplyAsDoctor, useRegistration } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
@@ -21,23 +21,21 @@ import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import {
     isAcceptedFileSize,
     isAcceptedFileType,
+    MAX_ADDITIONAL_FILES,
     MAX_FILE_SIZE,
     MAX_FILE_SIZE_BYTES,
     patientRegistrationZSchema,
 } from "@/validation";
 import { Textarea } from "../ui/textarea";
 import { formatFileSize } from "@/utils";
+import { IDoctorApplicationData } from "@/types/doctor.type";
 
 export default function ApplyAsDoctorForm() {
     // const [showPassword, setShowPassword] = useState(false);
     // const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const router = useRouter();
 
-    // const { mutate: registration, isPending: registrationPending } =
-    //     useRegistration();
-
-    // Type Infer to handle contactNumber type mismatch
-    // type PatientDefaultValues = z.infer<typeof patientRegistrationZSchema>;
+    const { mutate: apply, isPending: applyPending } = useApplyAsDoctor();
 
     // Data Signature
     // {
@@ -58,18 +56,30 @@ export default function ApplyAsDoctorForm() {
     // };
 
     const defaultValues = {
-        name: "",
-        email: "",
-        contactNumber: "",
-        address: "",
-        specialization: "",
-        licenseNumber: "",
-        qualifications: "",
-        experienceYears: "",
-        consultationFee: "",
-        bio: "",
+        name: "Doctor Strange",
+        email: "strange@email.com",
+        contactNumber: "123456789",
+        address: "222B, Backer Street",
+        specialization: "Neuro Sergion",
+        licenseNumber: "SH654987013",
+        qualifications: "KhazadDhum",
+        experienceYears: "4",
+        consultationFee: "1000",
+        bio: "Expertised in KamarTaj",
         resume: null as File | null,
         additionalFiles: [] as File[],
+        // name: "",
+        // email: "",
+        // contactNumber: "",
+        // address: "",
+        // specialization: "",
+        // licenseNumber: "",
+        // qualifications: "",
+        // experienceYears: "",
+        // consultationFee: "",
+        // bio: "",
+        // resume: null as File | null,
+        // additionalFiles: [] as File[],
     };
 
     const form = useForm({
@@ -78,53 +88,37 @@ export default function ApplyAsDoctorForm() {
         //     onSubmit: patientRegistrationZSchema,
         // },
         onSubmit: async ({ value }) => {
-            console.log("value", value);
-            // const registrationData = {
-            //     name: value.name,
-            //     email: value.email,
-            //     password: value.password,
-            //     patient: {
-            //         contactNumber: value.contactNumber,
-            //     },
-            // };
-            // registration(registrationData, {
-            //     onSuccess: (res) => {
-            //         // console.log("res", res);
+            const doctorData: IDoctorApplicationData = {
+                user: {
+                    name: value.name.trim(),
+                    email: value.email.trim(),
+                },
+                doctor: {
+                    specialization: value.specialization.trim(),
+                    licenseNumber: value.licenseNumber.trim(),
+                    qualifications: value.qualifications.trim(),
+                    experienceYears: value.experienceYears.trim(),
+                    contactNumber: value.contactNumber.trim(),
+                    address: value.address.trim(),
+                    consultationFee: value.consultationFee.trim()
+                        ? Number(value.consultationFee)
+                        : undefined,
+                    bio: value.bio.trim(),
+                },
+            };
 
-            //         if (!res.success) {
-            //             toast.add({
-            //                 title: "Server Failure",
-            //                 description:
-            //                     "Something Went Wrong! Please Try Again.",
-            //                 type: "error",
-            //             });
-            //         }
-
-            //         toast.add({
-            //             title: "Regsitration Successful",
-            //             description: "Please verify your email",
-            //             type: "success",
-            //         });
-
-            //         // For test purpose
-            //         const params = new URLSearchParams({
-            //             email: registrationData.email, // Data share among routes using url
-            //         });
-            //         router.push(
-            //             `/register/verify-account?${params.toString()}`,
-            //         );
-            //     },
-            //     onError: (err) => {
-            //         // console.log("error", err);
-            //         toast.add({
-            //             title: "Registration Failure",
-            //             description:
-            //                 err.message ||
-            //                 "Something Went Wrong! Please Try Again.",
-            //             type: "error",
-            //         });
-            //     },
-            // });
+            apply(
+                {
+                    data: doctorData,
+                    resume: value.resume as File,
+                    additionalFiles: value.additionalFiles,
+                },
+                {
+                    onSuccess: (res) => {
+                        console.log(res);
+                    },
+                },
+            );
         },
     });
     return (
@@ -540,7 +534,7 @@ export default function ApplyAsDoctorForm() {
                                     <FieldLabel htmlFor="resume-field">
                                         Resume
                                     </FieldLabel>
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-wrap items-center gap-3">
                                         <Button
                                             render={
                                                 <label htmlFor="resume-field" />
@@ -598,10 +592,9 @@ export default function ApplyAsDoctorForm() {
                                                 </button>
                                             </span>
                                         ) : (
-                                            <span>
+                                            <span className="text-sm text-center text-muted-foreground">
                                                 {" "}
-                                                Supported File: .pdf, .doc,
-                                                .dox, .png, .jpg ans size{" "}
+                                                PDF, DOC, DOCZ, or Image up to{" "}
                                                 {MAX_FILE_SIZE}MB
                                             </span>
                                         )}
@@ -628,7 +621,7 @@ export default function ApplyAsDoctorForm() {
                                     <FieldLabel htmlFor="additional-file-field">
                                         Additional Files
                                     </FieldLabel>
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-wrap items-center gap-3">
                                         <Button
                                             render={
                                                 <label htmlFor="additional-file-field" />
@@ -636,9 +629,9 @@ export default function ApplyAsDoctorForm() {
                                             nativeButton={false}
                                             variant="outline"
                                         >
-                                            <FileUp size="4" />
+                                            <Plus size="4" />
                                             <label htmlFor="additional-file-field">
-                                                Upload Additional Files
+                                                Add Files
                                             </label>
                                         </Button>
 
@@ -683,24 +676,14 @@ export default function ApplyAsDoctorForm() {
                                                 ]);
                                             }}
                                         />
-                                        {/* {file ? (
-                                            <span className="inline-flex max-w-full items-center gap-2 rounded-lg bg-muted px-2.5 py-1 text-sm">
-                                                <FileText className="size-4 shrink-0 text-primary" />
-                                                <span className="truncate">
-                                                    {file.name}
-                                                </span>
-                                                <span className="text-xs text-muted-foreground">
-                                                    {formatFileSize(file.size)}
-                                                </span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        field.handleChange(null)
-                                                    }
-                                                >
-                                                    <X />
-                                                </button>
+                                        {files.length > 0 && (
+                                            <span className="text-xs text-muted-foreground">
+                                                {files.length} of{" "}
+                                                {MAX_ADDITIONAL_FILES} added
                                             </span>
+                                        )}
+                                        {/* {file ? (
+                                            
                                         ) : (
                                             <span>
                                                 {" "}
@@ -710,6 +693,45 @@ export default function ApplyAsDoctorForm() {
                                             </span>
                                         )} */}
                                     </div>
+                                    {files.length > 0 && (
+                                        <ul className="flex flex-col gap-2">
+                                            {files.map((file, index) => (
+                                                <li
+                                                    key={`${file.name}-${index}`}
+                                                    className="flex items-center justify-between gap-2 rounded-lg bg-muted px-3 py-2 text-sm"
+                                                >
+                                                    <span className="flex min-w-0 items-center gap-2">
+                                                        <FileText className="size-4 shrink-0 text-primary" />
+                                                        <span className="truncate">
+                                                            {file.name}
+                                                        </span>
+                                                        <span className="text-xs text-muted-foreground">
+                                                            {formatFileSize(
+                                                                file.size,
+                                                            )}
+                                                        </span>
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        aria-label={`Remove ${file.name}`}
+                                                        onClick={() => {
+                                                            field.handleChange(
+                                                                files.filter(
+                                                                    (_, i) =>
+                                                                        i !==
+                                                                        index,
+                                                                ),
+                                                            );
+                                                            field.handleBlur();
+                                                        }}
+                                                        className="text-muted-foreground transition-colors hover:text-destructive  focus:outline-none"
+                                                    >
+                                                        <X className="size-4" />
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
 
                                     {isInvalid && (
                                         <FieldError
@@ -722,13 +744,13 @@ export default function ApplyAsDoctorForm() {
                     </form.Field>
                 </FieldGroup>
                 <div className="flex justify-end w-full mt-5">
-                    <Button type="submit" size="lg">
+                    <Button type="submit" size="lg" disabled={applyPending}>
                         {/**button will be grayed out if disabled is true, prevent user from multiple submit */}
-                        {/* {registrationPending ? (
+                        {applyPending ? (
                             <Spinner>"Submitting" </Spinner>
-                        ) : ( */}
-                        "Submit"
-                        {/* )}{" "} */}
+                        ) : (
+                            "Submit"
+                        )}{" "}
                         {/* dynamin text inside submit box */}
                     </Button>
                 </div>
