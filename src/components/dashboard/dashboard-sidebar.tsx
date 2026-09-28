@@ -1,7 +1,4 @@
-import * as React from "react";
-
-// import { SearchForm } from "@/components/search-form";
-// import { VersionSwitcher } from "@/components/version-switcher";
+"use client";
 import {
     Sidebar,
     SidebarContent,
@@ -15,45 +12,29 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar";
 import PhHealthcareLogo from "@/assets/svg/Logo";
+import { UserRole } from "@/types";
+import { adminRoutes, doctorRoutes, patientRoutes } from "@/routes";
+import { TSidebarItems } from "@/types/sidebar.types";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-// This is sample data.
-const data = {
-    navMain: [
-        {
-            title: "Management",
-            items: [
-                {
-                    title: "Overview",
-                    url: "/admin",
-                },
-                {
-                    title: "Doctor Approval",
-                    url: "/admin/approve-doctor",
-                },
-            ],
-        },
-        {
-            title: "App Settings",
-            items: [
-                {
-                    title: "Routing",
-                    url: "#",
-                },
-                {
-                    title: "Data Fetching",
-                    url: "#",
-                    isActive: true,
-                },
-            ],
-        },
-    ],
+const sidebarRoutes: Partial<Record<UserRole, TSidebarItems>> = {
+    SUPER_ADMIN: adminRoutes,
+    ADMIN: adminRoutes,
+    DOCTOR: doctorRoutes,
+    PATIENT: patientRoutes,
 };
 
-export function DashboardSidebar({
-    ...props
-}: React.ComponentProps<typeof Sidebar>) {
+export function DashboardSidebar({ role }: { role: UserRole }) {
+    const pathname = usePathname();
+
+    // const routes = sidebarRoutes[role] as TSidebarItems;
+    const routes = sidebarRoutes[role] || [];
+
+    console.log("pathname: ", pathname);
+
     return (
-        <Sidebar {...props}>
+        <Sidebar>
             <SidebarHeader>
                 <div className="flex items-center gap-2">
                     <PhHealthcareLogo />
@@ -67,7 +48,7 @@ export function DashboardSidebar({
             </SidebarHeader>
             <SidebarContent>
                 {/* We create a SidebarGroup for each parent. */}
-                {data.navMain.map((item) => (
+                {routes.map((item) => (
                     <SidebarGroup key={item.title}>
                         <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
                         <SidebarGroupContent>
@@ -75,10 +56,10 @@ export function DashboardSidebar({
                                 {item.items.map((item) => (
                                     <SidebarMenuItem key={item.title}>
                                         <SidebarMenuButton
-                                            asChild
-                                            isActive={item.isActive}
+                                            render={<Link href={item.url} />}
+                                            isActive={pathname === item.url}
                                         >
-                                            <a href={item.url}>{item.title}</a>
+                                            {item.title}
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))}
