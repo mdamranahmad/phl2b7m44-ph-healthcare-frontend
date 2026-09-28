@@ -3,6 +3,7 @@
 import { useGetMe } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
+import AuthLoading from "./auth-loading";
 
 const AuthGuard = ({ children }: { children: ReactNode }) => {
     const router = useRouter();
@@ -10,7 +11,7 @@ const AuthGuard = ({ children }: { children: ReactNode }) => {
 
     const user = data?.data;
 
-    console.log(data);
+    console.log(user);
 
     // Check if user is logged in, redirect user to login page if not
     useEffect(() => {
@@ -22,6 +23,14 @@ const AuthGuard = ({ children }: { children: ReactNode }) => {
             router.replace("/login");
         }
     }, [isError, isPending, user, router]);
+
+    if (isPending) {
+        return <AuthLoading />;
+    }
+
+    if (isError || !user) {
+        return <AuthLoading label="Redirecting..." />;
+    }
 
     return <>{children}</>;
 };
