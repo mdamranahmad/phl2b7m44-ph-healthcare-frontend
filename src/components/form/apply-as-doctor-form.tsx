@@ -601,18 +601,18 @@ export default function ApplyAsDoctorForm() {
                                                 const selected =
                                                     e.target.files?.[0] ?? null;
 
-                                                if (
-                                                    (selected &&
-                                                        !isAcceptedFileSize(
-                                                            selected?.size,
-                                                        )) ||
-                                                    !isAcceptedFileType(
-                                                        selected?.type as string,
-                                                    )
-                                                ) {
-                                                    field.handleBlur();
-                                                    return;
-                                                }
+                                                // if (
+                                                //     (selected &&
+                                                //         !isAcceptedFileSize(
+                                                //             selected?.size,
+                                                //         )) ||
+                                                //     !isAcceptedFileType(
+                                                //         selected?.type as string,
+                                                //     )
+                                                // ) {
+                                                //     field.handleBlur();
+                                                //     return;
+                                                // }
                                                 field.handleChange(selected);
                                                 e.target.value = "";
                                             }}
@@ -706,22 +706,22 @@ export default function ApplyAsDoctorForm() {
                                                     return;
                                                 }
 
-                                                const invalid = incoming.some(
-                                                    (file) => {
-                                                        !isAcceptedFileSize(
-                                                            file.size,
-                                                        ) ||
-                                                            !isAcceptedFileType(
-                                                                file.type,
-                                                            );
-                                                    },
-                                                );
+                                                // const invalid = incoming.some(
+                                                //     (file) => {
+                                                //         !isAcceptedFileSize(
+                                                //             file.size,
+                                                //         ) ||
+                                                //             !isAcceptedFileType(
+                                                //                 file.type,
+                                                //             );
+                                                //     },
+                                                // );
 
-                                                if (invalid) {
-                                                    field.handleBlur();
-                                                    e.target.value = "";
-                                                    return;
-                                                }
+                                                // if (invalid) {
+                                                //     field.handleBlur();
+                                                //     e.target.value = "";
+                                                //     return;
+                                                // }
                                                 // console.log([
                                                 //     ...files,
                                                 //     ...incoming,
@@ -731,6 +731,7 @@ export default function ApplyAsDoctorForm() {
                                                     ...files,
                                                     ...incoming,
                                                 ]);
+                                                e.target.value = "";
                                             }}
                                         />
                                         {files.length > 0 && (
