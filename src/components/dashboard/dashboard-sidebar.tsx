@@ -36,10 +36,12 @@ export function DashboardSidebar({ role }: { role: UserRole }) {
     return (
         <Sidebar>
             <SidebarHeader>
-                <div className="flex items-center gap-2">
-                    <PhHealthcareLogo />
-                    <span>PH Healthcare</span>
-                </div>
+                <Link href="/">
+                    <div className="flex items-center gap-2">
+                        <PhHealthcareLogo />
+                        <span>PH Healthcare</span>
+                    </div>
+                </Link>
                 {/* <VersionSwitcher
                     versions={data.versions}
                     defaultVersion={data.versions[0]}
