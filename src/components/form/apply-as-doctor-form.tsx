@@ -19,6 +19,7 @@ import { Spinner } from "../ui/spinner";
 import Link from "next/link";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import {
+    DoctorApplicationZSchema,
     isAcceptedFileSize,
     isAcceptedFileType,
     MAX_ADDITIONAL_FILES,
@@ -56,30 +57,30 @@ export default function ApplyAsDoctorForm() {
     // };
 
     const defaultValues = {
-        name: "Doctor Strange",
-        email: "strange@email.com",
-        contactNumber: "123456789",
-        address: "222B, Backer Street",
-        specialization: "Neuro Sergion",
-        licenseNumber: "SH654987013",
-        qualifications: "KhazadDhum",
-        experienceYears: "4",
-        consultationFee: "1000",
-        bio: "Expertised in KamarTaj",
-        resume: null as File | null,
-        additionalFiles: [] as File[],
-        // name: "",
-        // email: "",
-        // contactNumber: "",
-        // address: "",
-        // specialization: "",
-        // licenseNumber: "",
-        // qualifications: "",
-        // experienceYears: "",
-        // consultationFee: "",
-        // bio: "",
+        // name: "Doctor Strange",
+        // email: "strange@email.com",
+        // contactNumber: "123456789",
+        // address: "222B, Backer Street",
+        // specialization: "Neuro Sergion",
+        // licenseNumber: "SH654987013",
+        // qualifications: "KhazadDhum",
+        // experienceYears: "4",
+        // consultationFee: "1000",
+        // bio: "Expertised in KamarTaj",
         // resume: null as File | null,
         // additionalFiles: [] as File[],
+        name: "",
+        email: "",
+        contactNumber: "",
+        address: "",
+        specialization: "",
+        licenseNumber: "",
+        qualifications: "",
+        experienceYears: "",
+        consultationFee: "",
+        bio: "",
+        resume: null as File | null,
+        additionalFiles: [] as File[],
     };
 
     const form = useForm({
@@ -87,6 +88,10 @@ export default function ApplyAsDoctorForm() {
         // validators: {
         //     onSubmit: patientRegistrationZSchema,
         // },
+
+        validators: {
+            onSubmit: DoctorApplicationZSchema,
+        },
         onSubmit: async ({ value }) => {
             const doctorData: IDoctorApplicationData = {
                 user: {
@@ -292,7 +297,10 @@ export default function ApplyAsDoctorForm() {
                                 return (
                                     <Field data-invalid={isInvalid}>
                                         <FieldLabel htmlFor={field.name}>
-                                            Practice Address
+                                            Practice Address{" "}
+                                            <span className="font-normal text-muted-foreground">
+                                                (optional)
+                                            </span>
                                         </FieldLabel>
                                         <div className="relative">
                                             <Input
@@ -481,7 +489,10 @@ export default function ApplyAsDoctorForm() {
                                 return (
                                     <Field data-invalid={isInvalid}>
                                         <FieldLabel htmlFor={field.name}>
-                                            Consultation Fee (BDT)
+                                            Consultation Fee (BDT){" "}
+                                            <span className="font-normal text-muted-foreground">
+                                                (optional)
+                                            </span>
                                         </FieldLabel>
                                         <div className="relative">
                                             <Input
@@ -661,7 +672,10 @@ export default function ApplyAsDoctorForm() {
                             return (
                                 <Field data-invalid={isInvalid}>
                                     <FieldLabel htmlFor="additional-file-field">
-                                        Additional Files
+                                        Additional Files{" "}
+                                        <span className="font-normal text-muted-foreground">
+                                            (optional)
+                                        </span>
                                     </FieldLabel>
                                     <div className="flex flex-wrap items-center gap-3">
                                         <Button

@@ -24,6 +24,22 @@ export function isAcceptedFileType(fileType: string) {
     return ACCEPTED_FILE_TYPES.includes(fileType);
 }
 
+export const getCustomFileSchema = <T>(message: string) =>
+    z
+        .custom<T>(
+            (value) =>
+                value === null ||
+                (value instanceof File &&
+                    isAcceptedFileSize(value.size) &&
+                    isAcceptedFileType(value.type)),
+            {
+                message,
+            },
+        )
+        .refine((value) => value instanceof File, {
+            message: "A resume of cv is required",
+        });
+
 export const DoctorApplicationZSchema = z.object({
     name: z
         .string({
@@ -35,7 +51,7 @@ export const DoctorApplicationZSchema = z.object({
     email: z.email({
         message: "Invalid email address",
     }),
-    phone: z.string().trim(),
+    contactNumber: z.string().trim(),
     address: z.string().trim(),
     specialization: z
         .string({
@@ -59,21 +75,54 @@ export const DoctorApplicationZSchema = z.object({
         .min(1, "Qualifications cannot be empty"),
 
     // Coerce string to number for FormData inputs
-    experienceYears: z.coerce
-        .number({
-            message: "Experience years must be a valid number",
+    experienceYears: z
+        // .number({
+        //     message: "Experience years must be a valid number",
+        // })
+        // .int("Experience must be an integer")
+        // .nonnegative("Experience cannot be negative")
+        .string()
+        .trim()
+        .refine((value) => value === "" || /^\d+$/.test(value), {
+            message: "Years of experience must be a whole value",
         })
-        .int("Experience must be an integer")
-        .nonnegative("Experience cannot be negative"),
+        .refine((value) => Number(value) >= 0 && Number(value) <= 60, {
+            message: "Years of experience must be between 0 and 60",
+        }),
 
     // Coerce string to number for FormData inputs
-    consultationFee: z.coerce
-        .number({
-            message: "Consultation fee must be a valid number",
-        })
-        .positive("Consultation fee must be a positive number"),
+    consultationFee: z
+        // .number({
+        //     message: "Consultation fee must be a valid number",
+        // })
+        // .positive("Consultation fee must be a positive number"),
+        .string()
+        .trim()
+        .refine(
+            (value) =>
+                value === "" || (/^\d+$/.test(value) && Number(value) >= 0),
+            {
+                message: "Consultation fee must be a non-zero whole number",
+            },
+        ),
     bio: z
         .string()
         .trim()
         .max(MAX_BIO_LENGTH, `Bio cannot exceed ${MAX_BIO_LENGTH} characters`),
+
+    resume: getCustomFileSchema<File | null>(
+        `Resume must be a PDF, DOC, DOCX or an image file ${MAX_FILE_SIZE}MB`,
+    ).refine((value) => value instanceof File, {
+        message: "A resume of cv is required",
+    }),
+    additionalFiles: z
+        .array(
+            getCustomFileSchema<File>(
+                `File must be a PDF, DOC, DOCX or an image file ${MAX_FILE_SIZE}MB`,
+            ),
+        )
+        .max(
+            MAX_ADDITIONAL_FILES,
+            `You can attach at most ${MAX_ADDITIONAL_FILES} supporting documents`,
+        ),
 });
