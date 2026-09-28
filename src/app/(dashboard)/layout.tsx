@@ -1,7 +1,11 @@
-import React from 'react'
+import AuthGuard from "@/components/auth/auth-guard";
+import { ReactNode } from "react";
 
-export default function DashboardLayout() {
-  return (
-    <div>DashboardLayout</div>
-  )
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+    return (
+        <AuthGuard>
+            General Dashboard Layout
+            {children}
+        </AuthGuard>
+    );
 }

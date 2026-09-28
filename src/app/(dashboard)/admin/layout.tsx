@@ -1,7 +1,5 @@
-import React from 'react'
+import { ReactNode } from "react";
 
-export default function AdminLayout() {
-  return (
-    <div>AdminLayout</div>
-  )
+export default function AdminLayout({ children }: { children: ReactNode }) {
+    return <div>Admin Layout{children}</div>;
 }
