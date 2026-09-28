@@ -115,7 +115,40 @@ export default function ApplyAsDoctorForm() {
                 },
                 {
                     onSuccess: (res) => {
-                        console.log(res);
+                        // console.log("res", res);
+
+                        if (!res.success) {
+                            toast.add({
+                                title: "Server Failure",
+                                description:
+                                    "Something Went Wrong! Please Try Again.",
+                                type: "error",
+                            });
+                        }
+
+                        toast.add({
+                            title: "Application Submitted",
+                            description: "Please verify your account",
+                            type: "success",
+                        });
+
+                        // For test purpose
+                        const params = new URLSearchParams({
+                            email: doctorData.user.email, // Data share among routes using url
+                        });
+                        router.push(
+                            `/apply/verify-account?${params.toString()}`,
+                        );
+                    },
+                    onError: (err) => {
+                        // console.log("error", err);
+                        toast.add({
+                            title: "Application Failure",
+                            description:
+                                err.message ||
+                                "Something Went Wrong! Please Try Again.",
+                            type: "error",
+                        });
                     },
                 },
             );
@@ -574,23 +607,32 @@ export default function ApplyAsDoctorForm() {
                                             }}
                                         />
                                         {file ? (
-                                            <span className="inline-flex max-w-full items-center gap-2 rounded-lg bg-muted px-2.5 py-1 text-sm">
-                                                <FileText className="size-4 shrink-0 text-primary" />
-                                                <span className="truncate">
-                                                    {file.name}
-                                                </span>
-                                                <span className="text-xs text-muted-foreground">
-                                                    {formatFileSize(file.size)}
+                                            <div className="flex w-full items-center justify-between gap-2 rounded-lg bg-muted px-3 py-2 text-sm">
+                                                <span className="flex min-w-0 items-center gap-2">
+                                                    <FileText className="size-4 shrink-0 text-primary" />
+                                                    <span className="truncate">
+                                                        {file.name}
+                                                    </span>
+                                                    <span className="text-xs text-muted-foreground">
+                                                        {formatFileSize(
+                                                            file.size,
+                                                        )}
+                                                    </span>
                                                 </span>
                                                 <button
                                                     type="button"
-                                                    onClick={() =>
-                                                        field.handleChange(null)
-                                                    }
+                                                    aria-label={`Remove ${file.name}`}
+                                                    onClick={() => {
+                                                        field.handleChange(
+                                                            null,
+                                                        );
+                                                        field.handleBlur();
+                                                    }}
+                                                    className="text-muted-foreground transition-colors hover:text-destructive  focus:outline-none"
                                                 >
-                                                    <X />
+                                                    <X className="size-4" />
                                                 </button>
-                                            </span>
+                                            </div>
                                         ) : (
                                             <span className="text-sm text-center text-muted-foreground">
                                                 {" "}
@@ -624,6 +666,7 @@ export default function ApplyAsDoctorForm() {
                                     <div className="flex flex-wrap items-center gap-3">
                                         <Button
                                             render={
+                                                // biome-ignore lint/a11y/noLabelWithoutControl: explanation>
                                                 <label htmlFor="additional-file-field" />
                                             }
                                             nativeButton={false}
@@ -747,7 +790,9 @@ export default function ApplyAsDoctorForm() {
                     <Button type="submit" size="lg" disabled={applyPending}>
                         {/**button will be grayed out if disabled is true, prevent user from multiple submit */}
                         {applyPending ? (
-                            <Spinner>"Submitting" </Spinner>
+                            <>
+                                <Spinner /> Submitting
+                            </>
                         ) : (
                             "Submit"
                         )}{" "}

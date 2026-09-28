@@ -14,14 +14,18 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import { Field, FieldDescription, FieldError, FieldLabel } from "../ui/field";
 import { useEffect, useState } from "react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { useVerifyAccount } from "@/hooks";
+import { useVerifyAccount, useVerifyDoctorAccount } from "@/hooks";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
 
 // const RESEND_COOLDOWN = 120;
-const RESEND_COOLDOWN = 10;   // for test purpose
+const RESEND_COOLDOWN = 10; // for test purpose
 
-export default function VerifyAccountForm() {
+export default function VerifyAccountForm({
+    mode = "patient",
+}: {
+    mode: "doctor" | "patient";
+}) {
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -29,8 +33,17 @@ export default function VerifyAccountForm() {
     const [isInvalid, setIsInvalid] = useState(false);
     const [resendTimer, setResendTimer] = useState(RESEND_COOLDOWN);
 
-    const { mutate: verifyAccount, isPending: verifyAccountPending } =
+    // const { mutate: verifyAccount, isPending: verifyAccountPending } =
+    //     useVerifyAccount();
+
+    const { mutate: verifyPatient, isPending: verifyAccountPending } =
         useVerifyAccount();
+    const { mutate: verifyDoctor, isPending: verifyDoctorAccountPending } =
+        useVerifyDoctorAccount();
+
+    const verify = mode === "doctor" ? verifyDoctor : verifyPatient;
+    const isVerifyPending =
+        mode === "doctor" ? verifyDoctorAccountPending : verifyAccountPending;
 
     const email = searchParams.get("email") || "";
 
@@ -38,7 +51,7 @@ export default function VerifyAccountForm() {
         if (!email) {
             router.push("/");
         }
-    }, [email]);
+    }, [email, router]);
 
     useEffect(() => {
         if (resendTimer <= 0) {
@@ -63,7 +76,7 @@ export default function VerifyAccountForm() {
             otp,
         };
 
-        verifyAccount(verifyData, {
+        verify(verifyData, {
             onSuccess: (res) => {
                 // console.log("res", res);
 
@@ -75,6 +88,17 @@ export default function VerifyAccountForm() {
                     });
                 }
 
+                if (mode === "doctor") {
+                    toast.add({
+                        title: "Verification Successful",
+                        description:
+                            "An admin will approve your account. This may take time. Please check your email in few days",
+                        type: "success",
+                    });
+
+                    router.push("/");
+                    return;
+                }
                 toast.add({
                     title: "Verification Successful",
                     description: "Welcome onboard",
@@ -163,9 +187,9 @@ export default function VerifyAccountForm() {
             </CardContent>
             <CardFooter>
                 <Button disabled={resendTimer > 0}>Resend</Button>
-                <Button disabled={verifyAccountPending} type="submit">
+                <Button disabled={isVerifyPending} type="submit">
                     {/**button will be grayed out if disabled is true, prevent user from multiple submit */}
-                    {verifyAccountPending ? (
+                    {isVerifyPending ? (
                         <Spinner>"Submitting" </Spinner>
                     ) : (
                         "Submit"

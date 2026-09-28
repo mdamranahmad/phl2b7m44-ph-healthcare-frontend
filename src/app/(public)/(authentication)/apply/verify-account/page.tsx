@@ -27,7 +27,7 @@ export default function VerifyAccountPage() {
                             {/**
                              * Suspense make nextjs to render a fall backup for this part
                              */}
-                            <VerifyAccountForm mode="patient" />
+                            <VerifyAccountForm mode="doctor" />
                         </Suspense>
                     </div>
                 </div>
