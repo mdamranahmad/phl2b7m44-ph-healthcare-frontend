@@ -9,10 +9,14 @@ import {
 import DoctorReviewSheet from "./doctor-preview-sheet";
 import { useSuspenseGetAllDoctors } from "@/hooks";
 import { IDoctorParams, TDoctorVerificationStatus } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Dispatch, SetStateAction } from "react";
 
-interface IProps extends IDoctorParams {}
+interface IProps extends IDoctorParams {
+    handleReview: Dispatch<SetStateAction<string>>;
+}
 
-const DoctorApprovalTable = ({ ...params }: IProps) => {
+const DoctorApprovalTable = ({ handleReview, ...params }: IProps) => {
     // const { data, isPending } = useGetAllDoctors();
 
     // Implement useSuspenseQuery for smart handling data with loading
@@ -63,7 +67,13 @@ const DoctorApprovalTable = ({ ...params }: IProps) => {
                                 {doctor.specialization}
                             </TableCell>
                             <TableCell className="text-right">
-                                <DoctorReviewSheet />
+                                {/* <DoctorReviewSheet /> */}
+                                <Button
+                                    variant="outline"
+                                    onClick={() => handleReview(doctor.id)}
+                                >
+                                    Review
+                                </Button>
                             </TableCell>
                         </TableRow>
                     ))}

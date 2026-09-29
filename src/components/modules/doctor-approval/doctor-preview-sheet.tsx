@@ -8,17 +8,23 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 
-const DoctorReviewSheet = () => {
+interface IProps {
+    selectedId: string;
+    onClose: () => void;
+}
+
+const DoctorReviewSheet = ({ selectedId, onClose }: IProps) => {
     return (
-        <Sheet>
-            <SheetTrigger>Review</SheetTrigger>
-            <SheetContent>
+        <Sheet open={!!selectedId} onOpenChange={onClose}>
+            {/* <SheetTrigger>Review</SheetTrigger> */}
+            <SheetContent side="left">
                 <SheetHeader>
                     <SheetTitle>Are you absolutely sure?</SheetTitle>
                     <SheetDescription>
                         This action cannot be undone.
                     </SheetDescription>
                 </SheetHeader>
+                Doctor Id {selectedId}
             </SheetContent>
         </Sheet>
     );

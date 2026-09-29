@@ -6,6 +6,7 @@ import { Suspense, useState } from "react";
 import DoctorApprovalTableLoading from "./doctor-approval-table-loading";
 import { IDoctorParams, TDoctorVerificationStatus } from "@/types";
 import { Input } from "@/components/ui/input";
+import DoctorReviewSheet from "./doctor-preview-sheet";
 
 const verificationStatus: ["ALL" | TDoctorVerificationStatus, string][] = [
     ["APPROVED", "Approved"],
@@ -16,6 +17,7 @@ const verificationStatus: ["ALL" | TDoctorVerificationStatus, string][] = [
 
 const DoctorApprovalTabs = () => {
     const [tab, setTab] = useState<"ALL" | TDoctorVerificationStatus>("ALL");
+    const [selectedId, setSelectedId] = useState("");
 
     const queryParams: IDoctorParams = {
         page: 1,
@@ -40,8 +42,12 @@ const DoctorApprovalTabs = () => {
                 </Tabs>
             </div>
             <Suspense fallback={<DoctorApprovalTableLoading />}>
-                <DoctorApprovalTable {...queryParams} />
+                <DoctorApprovalTable
+                    {...queryParams}
+                    handleReview={setSelectedId}
+                />
             </Suspense>
+            <DoctorReviewSheet selectedId={selectedId} onClose={() => setSelectedId("")}/>
         </>
     );
 };
