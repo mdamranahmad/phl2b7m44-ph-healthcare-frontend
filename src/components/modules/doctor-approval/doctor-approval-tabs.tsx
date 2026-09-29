@@ -20,7 +20,7 @@ const DoctorApprovalTabs = () => {
     const queryParams: IDoctorParams = {
         page: 1,
         limit: 10,
-        verificationStatus: "PENDING",
+        ...(tab === "ALL" ? {} : { verificationStatus: tab }),
     };
 
     return (
