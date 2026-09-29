@@ -1,6 +1,6 @@
 import apiClient from "@/lib/apiClient";
 import { IApiResponse, IUserVerifyAccountPayload } from "@/types";
-import { IDoctor, IDoctorApplicationPayload } from "@/types/doctor.type";
+import { IDoctor, IDoctorApplicationPayload, IDoctorParams } from "@/types/doctor.type";
 
 // A function fetch apply as doctor api
 export function applyAsDoctor(payload: IDoctorApplicationPayload) {
@@ -28,6 +28,8 @@ export function verifyDoctorAccount(payload: IUserVerifyAccountPayload) {
 }
 
 // A function to fetch get all doctors api for admin and super admin
-export function getAllDoctors() {
-    return apiClient<IApiResponse<IDoctor[]>>("/doctor/all-doctors"); // implement type safety at api fetch level
+export function getAllDoctors(params: IDoctorParams) {
+    return apiClient<IApiResponse<IDoctor[]>>("/doctor/all-doctors", {
+        params,
+    }); // implement type safety at api fetch level
 }

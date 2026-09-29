@@ -8,12 +8,15 @@ import {
 } from "@/components/ui/table";
 import DoctorReviewSheet from "./doctor-preview-sheet";
 import { useSuspenseGetAllDoctors } from "@/hooks";
+import { IDoctorParams, TDoctorVerificationStatus } from "@/types";
 
-const DoctorApprovalTable = () => {
+interface IProps extends IDoctorParams {}
+
+const DoctorApprovalTable = ({ ...params }: IProps) => {
     // const { data, isPending } = useGetAllDoctors();
 
     // Implement useSuspenseQuery for smart handling data with loading
-    const { data } = useSuspenseGetAllDoctors();
+    const { data } = useSuspenseGetAllDoctors(params);
 
     // console.log(data);
 

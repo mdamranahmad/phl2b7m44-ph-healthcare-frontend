@@ -50,3 +50,11 @@ export interface IDoctor {
     userId: string;
     user: IUser;
 }
+
+export interface IDoctorParams {
+    verificationStatus?: TDoctorVerificationStatus;
+    page?: number;
+    limit?: number;
+    searchTerm?: string;
+    sortOrder?: "desc" | "ssc";
+}
