@@ -7,20 +7,24 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import DoctorReviewSheet from "./doctor-preview-sheet";
-import { useGetAllDoctors } from "@/hooks";
+import { useSuspenseGetAllDoctors } from "@/hooks";
 
 const DoctorApprovalTable = () => {
-    const { data, isPending } = useGetAllDoctors();
+    // const { data, isPending } = useGetAllDoctors();
+
+    // Implement useSuspenseQuery for smart handling data with loading
+    const { data } = useSuspenseGetAllDoctors();
 
     // console.log(data);
 
-    const doctors = data?.data || [];
+    // const doctors = data?.data || [];
+    const doctors = data?.data;
 
     // console.log(doctors);
 
-    if (isPending) {
-        return <p>Loading...</p>;
-    }
+    // if (isPending) {
+    //     return <p>Loading...</p>;
+    // }
 
     return (
         <div className="border rounded-lg">
