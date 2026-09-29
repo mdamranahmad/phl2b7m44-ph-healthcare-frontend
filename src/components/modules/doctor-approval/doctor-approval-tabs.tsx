@@ -2,32 +2,37 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DoctorApprovalTable from "./doctor-approval-table";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import DoctorApprovalTableLoading from "./doctor-approval-table-loading";
+import { TDoctorVerificationStatus } from "@/types";
+import { Input } from "@/components/ui/input";
+
+const verificationStatus: ["ALL" | TDoctorVerificationStatus, string][] = [
+    ["APPROVED", "Approved"],
+    ["PENDING", "Pending"],
+    ["REJECTED", "Rejected"],
+    ["ALL", "All"],
+];
 
 const DoctorApprovalTabs = () => {
+    const [tab, setTab] = useState("ALL");
+
     return (
         <>
-            <Tabs defaultValue="account">
-                <TabsList>
-                    <TabsTrigger value="pending">Pending</TabsTrigger>
-                    <TabsTrigger value="approved">Approved</TabsTrigger>
-                    <TabsTrigger value="rejected">Rejected</TabsTrigger>
-                    <TabsTrigger value="all">All</TabsTrigger>
-                </TabsList>
-                {/* <TabsContent value="pending">
-                    <DoctorApprovalTable />
-                </TabsContent>
-                <TabsContent value="approved">
-                    <DoctorApprovalTable />
-                </TabsContent>
-                <TabsContent value="rejected">
-                    <DoctorApprovalTable />
-                </TabsContent>
-                <TabsContent value="all">
-                    <DoctorApprovalTable />
-                </TabsContent> */}
-            </Tabs>
+            <div className="flex justify-between my-5">
+                <div>
+                    <Input type="search" />
+                </div>
+                <Tabs value={tab} onValueChange={(value) => setTab(value)}>
+                    <TabsList>
+                        {verificationStatus.map(([value, label]) => (
+                            <TabsTrigger key={value} value={value}>
+                                {label}
+                            </TabsTrigger>
+                        ))}
+                    </TabsList>
+                </Tabs>
+            </div>
             <Suspense fallback={<DoctorApprovalTableLoading />}>
                 <DoctorApprovalTable />
             </Suspense>
