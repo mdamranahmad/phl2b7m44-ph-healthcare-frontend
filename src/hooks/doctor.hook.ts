@@ -1,6 +1,16 @@
-import { applyAsDoctor, approveDoctor, getAllDoctors, verifyDoctorAccount } from "@/api";
+import {
+    applyAsDoctor,
+    approveDoctor,
+    getAllDoctors,
+    verifyDoctorAccount,
+} from "@/api";
 import { IDoctorParams } from "@/types";
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+    useMutation,
+    useQuery,
+    useQueryClient,
+    useSuspenseQuery,
+} from "@tanstack/react-query";
 
 export function useApplyAsDoctor() {
     return useMutation({
@@ -16,20 +26,25 @@ export function useVerifyDoctorAccount() {
 
 export function useGetAllDoctors(params: IDoctorParams) {
     return useQuery({
-        queryKey: ["doctor", params],
+        queryKey: ["doctors", params],
         queryFn: () => getAllDoctors(params),
     });
 }
 
 export function useSuspenseGetAllDoctors(params: IDoctorParams) {
     return useSuspenseQuery({
-        queryKey: ["doctor", params], // cache tag for fetched data
+        queryKey: ["doctors", params], // cache tag for fetched data
         queryFn: () => getAllDoctors(params), // for queryFn, there should only be function reference, no function call
     });
 }
 
 export function useApproveDoctor() {
+    const queryClient = useQueryClient();
+
     return useMutation({
-        mutationFn: approveDoctor,     
+        mutationFn: approveDoctor,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["doctors"] });  // To revalidate / update cached data
+        },
     });
 }

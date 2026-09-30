@@ -68,12 +68,26 @@ const DoctorApprovalTable = ({ handleReview, ...params }: IProps) => {
                             </TableCell>
                             <TableCell className="text-right">
                                 {/* <DoctorReviewSheet /> */}
-                                <Button
-                                    variant="outline"
-                                    onClick={() => handleReview(doctor.id)}
-                                >
-                                    Review
-                                </Button>
+                                {doctor.user.emailVerified ? (
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => handleReview(doctor.id)}
+                                        disabled={
+                                            doctor.verificationStatus !==
+                                            "PENDING"
+                                        }
+                                    >
+                                        Review
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        disabled
+                                        variant="outline"
+                                        // onClick={() => handleReview(doctor.id)}
+                                    >
+                                        Not Verified
+                                    </Button>
+                                )}
                             </TableCell>
                         </TableRow>
                     ))}
