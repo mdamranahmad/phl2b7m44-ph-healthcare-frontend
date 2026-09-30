@@ -47,7 +47,11 @@ const DoctorApprovalTabs = () => {
                     handleReview={setSelectedId}
                 />
             </Suspense>
-            <DoctorReviewSheet selectedId={selectedId} onClose={() => setSelectedId("")}/>
+            <DoctorReviewSheet
+                selectedId={selectedId}
+                onClose={() => setSelectedId("")}
+                {...queryParams}
+            />
         </>
     );
 };
