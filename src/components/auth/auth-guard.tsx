@@ -11,7 +11,7 @@ const AuthGuard = ({ children }: { children: ReactNode }) => {
 
     const user = data?.data;
 
-    console.log(user);
+    // console.log(user);
 
     // Check if user is logged in, redirect user to login page if not
     useEffect(() => {

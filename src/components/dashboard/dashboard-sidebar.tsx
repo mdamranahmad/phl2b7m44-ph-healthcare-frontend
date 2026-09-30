@@ -31,7 +31,7 @@ export function DashboardSidebar({ role }: { role: UserRole }) {
     // const routes = sidebarRoutes[role] as TSidebarItems;
     const routes = sidebarRoutes[role] || [];
 
-    console.log("pathname: ", pathname);
+    // console.log("pathname: ", pathname);
 
     return (
         <Sidebar>

@@ -187,7 +187,7 @@ export default function VerifyAccountForm({
             </CardContent>
             <CardFooter>
                 <Button disabled={resendTimer > 0}>Resend</Button>
-                <Button disabled={isVerifyPending} type="submit">
+                <Button disabled={isVerifyPending} type="submit" onClick={handleOTP}>
                     {/**button will be grayed out if disabled is true, prevent user from multiple submit */}
                     {isVerifyPending ? (
                         <Spinner>"Submitting" </Spinner>
