@@ -6,11 +6,11 @@ import {
     SheetFooter,
     SheetHeader,
     SheetTitle,
-    SheetTrigger,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import { useGetAllDoctors } from "@/hooks";
-import { IDoctorParams } from "@/types";
+import { toast } from "@/components/ui/toast";
+import { useApproveDoctor, useGetAllDoctors } from "@/hooks";
+import { IApproveDoctorPayload, IDoctorParams } from "@/types";
 import { useState } from "react";
 
 interface IProps extends IDoctorParams {
@@ -20,8 +20,12 @@ interface IProps extends IDoctorParams {
 
 const DoctorReviewSheet = ({ selectedId, onClose, ...params }: IProps) => {
     const [confirmRejection, setConfirmRejection] = useState(false);
+    const [rejectionReason, setRejectionReason] = useState("");
+
+    // console.log(rejectionReason);
 
     const { data } = useGetAllDoctors(params);
+    const { mutate: verify, isPending } = useApproveDoctor();
 
     // console.log("From inside sheet component: ", data)
 
@@ -29,9 +33,38 @@ const DoctorReviewSheet = ({ selectedId, onClose, ...params }: IProps) => {
         (doctor) => doctor.id === selectedId,
     );
 
-    const handleReviewAction = () => {
+    const handleClose = () => {
         setConfirmRejection(false);
+        setRejectionReason("");
         onClose();
+    };
+
+    const handleReviewAction = (status: "APPROVED" | "REJECTED") => {
+        const reviewData: IApproveDoctorPayload = {
+            doctorId: selectedId,
+            verificationStatus: status,
+            rejectionReason,
+        };
+        // setConfirmRejection(false);
+        // onClose();
+        // handleClose();
+
+        // console.log(reviewData);
+
+        verify(reviewData, {
+            onSuccess: () => {
+                // console.log("Success");
+                toast.add({
+                    title: "Approved",
+                    description: "Doctor Application Accepted!",
+                    type: "success",
+                });
+                handleClose();
+            },
+            onError: () => {
+                console.log("Error");
+            },
+        });
     };
 
     if (!selectedDoctor) {
@@ -41,7 +74,7 @@ const DoctorReviewSheet = ({ selectedId, onClose, ...params }: IProps) => {
     // console.log("selectedDoctor: ", selectedDoctor);
 
     return (
-        <Sheet open={!!selectedId} onOpenChange={onClose}>
+        <Sheet open={!!selectedId} onOpenChange={handleClose}>
             {/* <SheetTrigger>Review</SheetTrigger> */}
             <SheetContent side="left">
                 <SheetHeader>
@@ -54,13 +87,33 @@ const DoctorReviewSheet = ({ selectedId, onClose, ...params }: IProps) => {
                 <SheetFooter>
                     {confirmRejection ? (
                         <div className="flex flex-col gap-3">
-                            <Textarea />
-                            <Button
-                                onClick={handleReviewAction}
-                                variant="outline"
-                            >
-                                Confirm
-                            </Button>
+                            <Textarea
+                                value={rejectionReason}
+                                onChange={(e) =>
+                                    setRejectionReason(e.target.value)
+                                }
+                            />
+                            <div className="flex gap-2">
+                                <Button
+                                    onClick={handleClose}
+                                    variant="outline"
+                                    className="flex-1"
+                                    size="lg"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        handleReviewAction("REJECTED")
+                                    }
+                                    variant="destructive"
+                                    className="flex-1"
+                                    size="lg"
+                                    disabled={!rejectionReason}
+                                >
+                                    Confirm Rejection
+                                </Button>
+                            </div>
                         </div>
                     ) : (
                         <div className="flex gap-2">
@@ -73,7 +126,7 @@ const DoctorReviewSheet = ({ selectedId, onClose, ...params }: IProps) => {
                                 Reject
                             </Button>
                             <Button
-                                onClick={handleReviewAction}
+                                onClick={() => handleReviewAction("APPROVED")}
                                 variant="default"
                                 size="lg"
                                 className="flex-1"

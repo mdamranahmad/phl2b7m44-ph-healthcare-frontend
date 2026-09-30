@@ -1,4 +1,4 @@
-import { applyAsDoctor, getAllDoctors, verifyDoctorAccount } from "@/api";
+import { applyAsDoctor, approveDoctor, getAllDoctors, verifyDoctorAccount } from "@/api";
 import { IDoctorParams } from "@/types";
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
@@ -25,5 +25,11 @@ export function useSuspenseGetAllDoctors(params: IDoctorParams) {
     return useSuspenseQuery({
         queryKey: ["doctor", params], // cache tag for fetched data
         queryFn: () => getAllDoctors(params), // for queryFn, there should only be function reference, no function call
+    });
+}
+
+export function useApproveDoctor() {
+    return useMutation({
+        mutationFn: approveDoctor,     
     });
 }
