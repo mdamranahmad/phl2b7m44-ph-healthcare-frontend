@@ -8,6 +8,7 @@ import { IDoctorParams, TDoctorVerificationStatus } from "@/types";
 import { Input } from "@/components/ui/input";
 import DoctorReviewSheet from "./doctor-preview-sheet";
 import useDebounce from "@/hooks/debounce.hook";
+import TablePagination from "@/components/ui/table-pagination";
 
 const verificationStatus: ["ALL" | TDoctorVerificationStatus, string][] = [
     ["APPROVED", "Approved"],
@@ -60,6 +61,7 @@ const DoctorApprovalTabs = () => {
                     handleReview={setSelectedId}
                 />
             </Suspense>
+            <TablePagination />
             <DoctorReviewSheet
                 selectedId={selectedId}
                 onClose={() => setSelectedId("")}
