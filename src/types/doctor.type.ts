@@ -56,7 +56,7 @@ export interface IDoctorParams {
     page?: number;
     limit?: number;
     searchTerm?: string;
-    sortOrder?: "desc" | "ssc";
+    sortOrder?: "desc" | "asc";
 }
 
 export interface IApproveDoctorPayload {

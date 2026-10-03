@@ -30,8 +30,10 @@ export default function LoginForm() {
         defaultValues: {
             // email: "",
             // password: "",
-            email: "superadmin01@email.com", // For Test Purpose only
-            password: "Super@admin12345",
+            // email: "superadmin01@email.com", // For Test Purpose only
+            // password: "Super@admin12345",
+            email: "strange05@email.com", // For Test Purpose only
+            password: "K0cEB#?ptZ",
         },
         validators: {
             onSubmit: loginZSchema,

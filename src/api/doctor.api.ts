@@ -46,3 +46,10 @@ export function approveDoctor(payload: IApproveDoctorPayload) {
         body: payload,
     }); // implement type safety at api fetch level
 }
+
+// A function to fetch get all doctors api for admin and super admin
+// export function getAllDoctors(params: IDoctorParams) {
+//     return apiClient<IApiResponse<IDoctor[]>>("/doctor/all-doctors", {
+//         params,
+//     }); // implement type safety at api fetch level
+// }
