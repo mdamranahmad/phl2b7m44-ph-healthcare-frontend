@@ -7,24 +7,76 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
 import { ICreateSchedulePayload } from "@/types/schedule.type";
+import { scheduleValidationZSchema } from "@/validation";
+import { useCreateSchedule } from "@/hooks";
+import { toast } from "../ui/toast";
 
 const CreateScheduleForm = () => {
+    const { mutate: createSchedule, isPending } = useCreateSchedule();
+
     const form = useForm({
         defaultValues: {
             date: "",
             startTime: "",
             endTime: "",
-            meetingLink: "",
+            meetingLink: "https://meet.google.com/aiu-ctor-moh",
+        },
+        validators: {
+            onSubmit: scheduleValidationZSchema,
         },
         onSubmit: ({ value }) => {
             // console.log(value);
             const scheduleValue: ICreateSchedulePayload = {
-                startDateTime: `${value.date}T${value.startTime}:00.000Z`,
-                endDateTime: `${value.date}T${value.endTime}:00.000Z`,
+                // startDateTime: `${value.date}T${value.startTime}:00.000Z`,
+                startDateTime: new Date(
+                    `${value.date}T${value.startTime}`,
+                ).toISOString(),
+                // endDateTime: `${value.date}T${value.endTime}:00.000Z`,
+                endDateTime: new Date(
+                    `${value.date}T${value.endTime}`,
+                ).toISOString(),
                 meetingLink: value.meetingLink,
             };
 
             console.log(scheduleValue);
+
+            createSchedule(scheduleValue, {
+                onSuccess: (res) => {
+                    // console.log("res", res);
+
+                    if (!res.success) {
+                        toast.add({
+                            title: "Schedule Create Failure",
+                            description:
+                                res.message ||
+                                "Something Went Wrong! Please Try Again.",
+                            type: "error",
+                        });
+                    }
+
+                    toast.add({
+                        title: "Schedule Create Successful",
+                        description: "Your schedule is saved as draft",
+                        type: "success",
+                    });
+
+                    // For test purpose
+                    // const params = new URLSearchParams({
+                    //     email: doctorData.user.email, // Data share among routes using url
+                    // });
+                    // router.push(`/apply/verify-account?${params.toString()}`);
+                },
+                onError: (err) => {
+                    // console.log("error", err);
+                    toast.add({
+                        title: "Application Failure",
+                        description:
+                            err.message ||
+                            "Something Went Wrong! Please Try Again.",
+                        type: "error",
+                    });
+                },
+            });
         },
     });
 
@@ -260,14 +312,9 @@ const CreateScheduleForm = () => {
                         );
                     }}
                 </form.Field> */}
-                <Button
-                    // disabled={loginPending}
-                    type="submit"
-                >
+                <Button disabled={isPending} type="submit">
                     {/**button will be grayed out if disabled is true, prevent user from multiple submit */}
-                    {/* {loginPending ? <Spinner>" */}
-                    Submitting
-                    {/* " </Spinner> : "Submit"}{" "} */}
+                    {isPending ? <Spinner>" Submitting " </Spinner> : "Submit"}{" "}
                     {/* dynamin text inside submit box */}
                 </Button>
             </FieldGroup>
