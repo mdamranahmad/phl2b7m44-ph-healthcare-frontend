@@ -5,6 +5,8 @@ import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
+import { format } from "date-fns";
+import { ICreateSchedulePayload } from "@/types/schedule.type";
 
 const CreateScheduleForm = () => {
     const form = useForm({
@@ -15,7 +17,14 @@ const CreateScheduleForm = () => {
             meetingLink: "",
         },
         onSubmit: ({ value }) => {
-            console.log(value);
+            // console.log(value);
+            const scheduleValue: ICreateSchedulePayload = {
+                startDateTime: `${value.date}T${value.startTime}:00.000Z`,
+                endDateTime: `${value.date}T${value.endTime}:00.000Z`,
+                meetingLink: value.meetingLink,
+            };
+
+            console.log(scheduleValue);
         },
     });
 
@@ -33,10 +42,12 @@ const CreateScheduleForm = () => {
                             field.state.meta.isTouched &&
                             !field.state.meta.isValid;
                         const selected = field.state.value
-                            ? new Date(field.state.value).toISOString()
+                            ? // ? new Date(field.state.value).toISOString()
+                              new Date(`${field.state.value}T00:00:00`)
                             : undefined;
 
-                        // console.log(selected);
+                        // console.log(field.state.value);
+                        console.log({ selected });
                         return (
                             <Field data-invalid={isInvalid}>
                                 <FieldLabel htmlFor={field.name}>
@@ -54,7 +65,18 @@ const CreateScheduleForm = () => {
                                             selected={selected}
                                             onSelect={(date) =>
                                                 // console.log(e)
-                                                field.handleChange(date)
+                                                // field.handleChange(date)
+                                                {
+                                                    if (date) {
+                                                        field.handleChange(
+                                                            format(
+                                                                date,
+                                                                "yyyy-MM-dd",
+                                                            ),
+                                                        );
+                                                        field.handleBlur();
+                                                    }
+                                                }
                                             }
                                         />
                                     </PopoverContent>
@@ -68,50 +90,95 @@ const CreateScheduleForm = () => {
                         );
                     }}
                 </form.Field>
-                <form.Field name="startTime">
-                    {(field) => {
-                        const isInvalid =
-                            field.state.meta.isTouched &&
-                            !field.state.meta.isValid;
+                <div className="grid grid-cols-2 gap-3">
+                    <form.Field name="startTime">
+                        {(field) => {
+                            const isInvalid =
+                                field.state.meta.isTouched &&
+                                !field.state.meta.isValid;
 
-                        return (
-                            <Field className="w-32">
-                                <FieldLabel htmlFor="time-picker-optional">
-                                    Start Time
-                                </FieldLabel>
-                                <Input
-                                    type="time"
-                                    id="time-picker-optional"
-                                    step="1"
-                                    defaultValue="10:30:00"
-                                    className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                                />
-                            </Field>
-                        );
-                    }}
-                </form.Field>
-                <form.Field name="endTime">
-                    {(field) => {
-                        const isInvalid =
-                            field.state.meta.isTouched &&
-                            !field.state.meta.isValid;
+                            return (
+                                <Field
+                                    data-invalid={isInvalid}
+                                    className="w-32"
+                                >
+                                    <FieldLabel htmlFor={field.name}>
+                                        Start Time
+                                    </FieldLabel>
+                                    <Input
+                                        type="time"
+                                        // id="time-picker-optional"
+                                        // step="1"
+                                        // defaultValue="10:30:00"
+                                        id={field.name}
+                                        value={field.state.value}
+                                        onChange={(e) =>
+                                            field.handleChange(e.target.value)
+                                        }
+                                        onBlur={field.handleBlur}
+                                        className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                                    />
+                                </Field>
+                            );
+                        }}
+                    </form.Field>
+                    <form.Field name="endTime">
+                        {(field) => {
+                            const isInvalid =
+                                field.state.meta.isTouched &&
+                                !field.state.meta.isValid;
 
-                        return (
-                            <Field className="w-32">
-                                <FieldLabel htmlFor="time-picker-optional">
-                                    End Time
-                                </FieldLabel>
-                                <Input
-                                    type="time"
-                                    id="time-picker-optional"
-                                    step="1"
-                                    defaultValue="10:30:00"
-                                    className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                                />
-                            </Field>
-                        );
-                    }}
-                </form.Field>
+                            return (
+                                <Field
+                                    data-invalid={isInvalid}
+                                    className="w-32"
+                                >
+                                    <FieldLabel htmlFor={field.name}>
+                                        End Time
+                                    </FieldLabel>
+                                    <Input
+                                        type="time"
+                                        // id="time-picker-optional"
+                                        // step="1"
+                                        // defaultValue="10:30:00"
+                                        id={field.name}
+                                        value={field.state.value}
+                                        onChange={(e) =>
+                                            field.handleChange(e.target.value)
+                                        }
+                                        onBlur={field.handleBlur}
+                                        className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                                    />
+                                </Field>
+                            );
+                        }}
+                    </form.Field>
+                    {/* <form.Field name="endTime">
+                        {(field) => {
+                            const isInvalid =
+                                field.state.meta.isTouched &&
+                                !field.state.meta.isValid;
+
+                            return (
+                                <Field
+                                    data-invalid={isInvalid}
+                                    className="w-32"
+                                >
+                                    <FieldLabel htmlFor="time-picker-optional">
+                                        End Time
+                                    </FieldLabel>
+                                    <Input
+                                        type="time"
+                                        id="time-picker-optional"
+                                        step="1"
+                                        defaultValue="10:30:00"
+                                        className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                                    />
+                                </Field>
+                            );
+                        }}
+                    </form.Field> */}
+                </div>
                 <form.Field name="meetingLink">
                     {(field) => {
                         const isInvalid =
