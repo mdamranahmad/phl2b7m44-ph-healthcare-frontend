@@ -3,6 +3,8 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
 
 const CreateScheduleForm = () => {
     const form = useForm({
@@ -11,6 +13,9 @@ const CreateScheduleForm = () => {
             startTime: "",
             endTime: "",
             meetingLink: "",
+        },
+        onSubmit: ({ value }) => {
+            console.log(value);
         },
     });
 
@@ -27,23 +32,33 @@ const CreateScheduleForm = () => {
                         const isInvalid =
                             field.state.meta.isTouched &&
                             !field.state.meta.isValid;
+                        const selected = field.state.value
+                            ? new Date(field.state.value).toISOString()
+                            : undefined;
 
+                        // console.log(selected);
                         return (
                             <Field data-invalid={isInvalid}>
                                 <FieldLabel htmlFor={field.name}>
                                     Date
                                 </FieldLabel>
-                                <Input
-                                    id={field.name}
-                                    name={field.name}
-                                    onChange={(e) => {
-                                        field.handleChange(e.target.value);
-                                    }}
-                                    // value={field.state.value}
-                                    onBlur={field.handleBlur}
-                                    autoComplete="off"
-                                    aria-invalid={isInvalid}
-                                />
+                                <Popover>
+                                    <PopoverTrigger
+                                        render={<Button variant="outline" />}
+                                    >
+                                        Select Date
+                                    </PopoverTrigger>
+                                    <PopoverContent>
+                                        <Calendar
+                                            mode="single"
+                                            selected={selected}
+                                            onSelect={(date) =>
+                                                // console.log(e)
+                                                field.handleChange(date)
+                                            }
+                                        />
+                                    </PopoverContent>
+                                </Popover>
                                 {isInvalid && (
                                     <FieldError
                                         errors={field.state.meta.errors}
@@ -179,7 +194,8 @@ const CreateScheduleForm = () => {
                     }}
                 </form.Field> */}
                 <Button
-                // disabled={loginPending} type="submit"
+                    // disabled={loginPending}
+                    type="submit"
                 >
                     {/**button will be grayed out if disabled is true, prevent user from multiple submit */}
                     {/* {loginPending ? <Spinner>" */}
