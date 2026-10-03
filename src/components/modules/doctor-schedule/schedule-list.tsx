@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { IScheduleParams, TScheduleStatus } from "@/types/schedule.type";
 import ScheduleTableLoading from "./shcedule-table-loading";
 import ScheduleTable from "./schedule-table";
+import ScheduleCreateDialogue from "./schedule-create-dialogue";
 
 const scheduleStatus: ["ALL" | TScheduleStatus, string][] = [
     ["ALL", "All"],
@@ -69,7 +70,8 @@ const ScheduleList = () => {
                         ))}
                     </TabsList>
                 </Tabs>
-                <Button size="lg">Create Schedule</Button>
+                {/* <Button size="lg">Create Schedule</Button> */}
+                <ScheduleCreateDialogue />
             </div>
             <Suspense fallback={<ScheduleTableLoading />}>
                 {/* <DoctorApprovalTable
