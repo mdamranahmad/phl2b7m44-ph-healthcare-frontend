@@ -21,13 +21,19 @@ const DoctorApprovalTabs = () => {
     const [tab, setTab] = useState<"ALL" | TDoctorVerificationStatus>("ALL");
     const [selectedId, setSelectedId] = useState("");
     const [searchInput, setSearchInput] = useState("");
+    const [page, setPage] = useState(1);
 
     const debouncedSearch = useDebounce(searchInput);
+
+    const handleSearch = (e: any) => {
+        setSearchInput(e.target.value);
+        setPage(1);
+    };
 
     // console.log(debouncedSearch);
 
     const queryParams: IDoctorParams = {
-        page: 1,
+        page,
         limit: 10,
         ...(tab === "ALL" ? {} : { verificationStatus: tab }),
         // searchTerm: searchInput, // Bad implementation, calls network on each keyStroke , sol: use debounce hook
@@ -40,7 +46,8 @@ const DoctorApprovalTabs = () => {
             <div className="flex justify-between my-5">
                 <div>
                     <Input
-                        onChange={(e) => setSearchInput(e.target.value)} // Bad implementation, calls network on each keyStroke
+                        // onChange={(e) => setSearchInput(e.target.value)} // Bad implementation, calls network on each keyStroke
+                        onChange={(e) => handleSearch(e)} // Bad implementation, calls network on each keyStroke
                         type="search"
                         placeholder="Search by name or email"
                     />
@@ -59,9 +66,10 @@ const DoctorApprovalTabs = () => {
                 <DoctorApprovalTable
                     {...queryParams}
                     handleReview={setSelectedId}
+                    handlePageChange={setPage}
                 />
             </Suspense>
-            <TablePagination />
+            {/* <TablePagination /> */}
             <DoctorReviewSheet
                 selectedId={selectedId}
                 onClose={() => setSelectedId("")}
