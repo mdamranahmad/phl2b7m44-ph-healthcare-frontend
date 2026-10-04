@@ -85,7 +85,7 @@ export interface IPublicDoctorProfile {
     createdAt: string;
 }
 
-export interface IMeta {
+interface IMeta {
     page: number;
     limit: number;
     total: number;
