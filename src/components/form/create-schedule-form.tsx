@@ -10,8 +10,10 @@ import { ICreateSchedulePayload } from "@/types/schedule.type";
 import { scheduleValidationZSchema } from "@/validation";
 import { useCreateSchedule } from "@/hooks";
 import { toast } from "../ui/toast";
+import { before } from "node:test";
+import { ApiError } from "@/types";
 
-const CreateScheduleForm = () => {
+const CreateScheduleForm = ({ handleClose }: { handleClose: () => void }) => {
     const { mutate: createSchedule, isPending } = useCreateSchedule();
 
     const form = useForm({
@@ -38,7 +40,7 @@ const CreateScheduleForm = () => {
                 meetingLink: value.meetingLink,
             };
 
-            console.log(scheduleValue);
+            // console.log(scheduleValue);
 
             createSchedule(scheduleValue, {
                 onSuccess: (res) => {
@@ -52,6 +54,7 @@ const CreateScheduleForm = () => {
                                 "Something Went Wrong! Please Try Again.",
                             type: "error",
                         });
+                        handleClose();
                     }
 
                     toast.add({
@@ -59,6 +62,7 @@ const CreateScheduleForm = () => {
                         description: "Your schedule is saved as draft",
                         type: "success",
                     });
+                    handleClose();
 
                     // For test purpose
                     // const params = new URLSearchParams({
@@ -66,15 +70,20 @@ const CreateScheduleForm = () => {
                     // });
                     // router.push(`/apply/verify-account?${params.toString()}`);
                 },
-                onError: (err) => {
-                    // console.log("error", err);
+                onError: (err: ApiError) => {
+                    // console.log("Full error object:", err);
+                    // console.log("err.data:", err.data);
+                    // console.log("err.response:", err.response);
+                    // console.log("err.body:", err.body);
                     toast.add({
                         title: "Application Failure",
                         description:
+                            err.data?.message ||
                             err.message ||
                             "Something Went Wrong! Please Try Again.",
                         type: "error",
                     });
+                    handleClose();
                 },
             });
         },
@@ -99,7 +108,7 @@ const CreateScheduleForm = () => {
                             : undefined;
 
                         // console.log(field.state.value);
-                        console.log({ selected });
+                        // console.log({ selected });
                         return (
                             <Field data-invalid={isInvalid}>
                                 <FieldLabel htmlFor={field.name}>
@@ -109,10 +118,13 @@ const CreateScheduleForm = () => {
                                     <PopoverTrigger
                                         render={<Button variant="outline" />}
                                     >
-                                        Select Date
+                                        {selected
+                                            ? `${format(selected, "PPP")}`
+                                            : "Select Date"}
                                     </PopoverTrigger>
-                                    <PopoverContent>
+                                    <PopoverContent className="w-auto p-0">
                                         <Calendar
+                                            disabled={{ before: new Date() }}
                                             mode="single"
                                             selected={selected}
                                             onSelect={(date) =>

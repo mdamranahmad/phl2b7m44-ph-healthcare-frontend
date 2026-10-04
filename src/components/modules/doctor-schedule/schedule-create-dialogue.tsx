@@ -25,7 +25,7 @@ const ScheduleCreateDialogue = () => {
                     <DialogDescription>
                         This schedule will be visible to patient
                     </DialogDescription>
-                    <CreateScheduleForm />
+                    <CreateScheduleForm handleClose={() => setOpen(false)} />
                 </DialogHeader>
             </DialogContent>
         </Dialog>

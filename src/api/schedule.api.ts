@@ -14,7 +14,22 @@ export function createSchedule(payload: ICreateSchedulePayload) {
 }
 
 export function getMySchedules(params: IScheduleParams) {
-    return apiClient<IApiResponse<ISchedule[]>>("/schedule/create-schedule", {
+    return apiClient<IApiResponse<ISchedule[]>>("/schedule/my-schedules", {
         params,
+    });
+}
+
+export function publishSchedule(scheduleId: string) {
+    return apiClient<IApiResponse<ISchedule>>(
+        `/schedule/publish-schedule/${scheduleId}`,
+        {
+            method: "PATCH",
+        },
+    );
+}
+
+export function deleteSchedule(scheduleId: string) {
+    return apiClient<IApiResponse<ISchedule>>(`/schedule/${scheduleId}`, {
+        method: "DELETE",
     });
 }

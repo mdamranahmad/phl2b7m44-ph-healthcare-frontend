@@ -62,7 +62,7 @@ const DoctorReviewSheet = ({ selectedId, onClose, ...params }: IProps) => {
                 handleClose();
             },
             onError: () => {
-                console.log("Error");
+                // console.log("Error");
             },
         });
     };

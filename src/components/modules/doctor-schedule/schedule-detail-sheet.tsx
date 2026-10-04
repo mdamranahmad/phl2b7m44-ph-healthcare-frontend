@@ -20,7 +20,7 @@ interface IProps extends IScheduleParams {
     onClose: () => void;
 }
 
-const DoctorReviewSheet = ({
+const ScheduleDetailSheet = ({
     schedule,
     open,
     onClose,
@@ -81,9 +81,9 @@ const DoctorReviewSheet = ({
     // // console.log("selectedDoctor: ", selectedDoctor);
 
     return (
-        <Sheet open={open} onOpenChange={onClose}>
+        <Sheet open={open} onOpenChange={onClose} >
             {/* <SheetTrigger>Review</SheetTrigger> */}
-            <SheetContent side="right">
+            <SheetContent side="right" className="p-10">
                 <SheetHeader>
                     <SheetTitle>Schedule Details</SheetTitle>
                     <SheetDescription>
@@ -120,6 +120,10 @@ const DoctorReviewSheet = ({
                     </div>
                     <div className="flex justify-between">
                         <dt className="text-muted-foreground">Status</dt>
+                        <dd>{schedule.status}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt className="text-muted-foreground">Slots</dt>
                         <dd>
                             {schedule.totalSlots - schedule.availableSlots} /{" "}
                             {schedule.totalSlots} booked
@@ -196,4 +200,4 @@ const DoctorReviewSheet = ({
     );
 };
 
-export default DoctorReviewSheet;
+export default ScheduleDetailSheet;

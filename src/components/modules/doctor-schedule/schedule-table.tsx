@@ -6,12 +6,17 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { useSuspenseGetAllDoctors } from "@/hooks";
+import {
+    useMySchedules,
+    useSuspenseGetAllDoctors,
+    useSuspenseMySchedules,
+} from "@/hooks";
 import { IDoctorParams, TDoctorVerificationStatus } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction } from "react";
 import TablePagination from "@/components/ui/table-pagination";
 import { ISchedule, IScheduleParams } from "@/types/schedule.type";
+import ScheduleActions from "./schedule-action";
 
 interface IProps extends IScheduleParams {
     // handleReview: Dispatch<SetStateAction<string>>;
@@ -19,7 +24,7 @@ interface IProps extends IScheduleParams {
 }
 
 const formateDateTime = (value: string) => {
-    return new Date(value).toLocaleDateString(undefined, {
+    return new Date(value).toLocaleString(undefined, {
         dateStyle: "medium",
         timeStyle: "short",
     });
@@ -30,7 +35,15 @@ const ScheduleTable = ({
     // handlePageChange,
     ...params
 }: IProps) => {
-    const schedules: ISchedule[] = [];
+    // const schedules: ISchedule[] = [];
+    // const { data } = useMySchedules(params);
+    // console.log(data)
+
+    const { data } = useSuspenseMySchedules(params);
+
+    const schedules: ISchedule[] = data?.data || [];
+
+    console.log({ schedules });
 
     if (schedules.length === 0) {
         return (
@@ -72,10 +85,14 @@ const ScheduleTable = ({
                         {schedules.map((schedule) => (
                             <TableRow key={schedule.id}>
                                 <TableCell className="font-medium">
-                                    {formateDateTime(schedule.startDateTime)}
-                                </TableCell>
-                                <TableCell className="font-medium">
-                                    {formateDateTime(schedule.endDateTime)}
+                                    <div className="font-medium">
+                                        {formateDateTime(
+                                            schedule.startDateTime,
+                                        )}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                        {formateDateTime(schedule.endDateTime)}
+                                    </div>
                                 </TableCell>
                                 <TableCell className="font-medium">
                                     {schedule.totalSlots -
@@ -93,34 +110,8 @@ const ScheduleTable = ({
                                         {schedule.status}
                                     </span>
                                 </TableCell>
-                                {/* <TableCell className="font-medium">
-                                    {doctor.specialization}
-                                </TableCell> */}
                                 <TableCell className="text-right">
-                                    {/* <DoctorReviewSheet /> */}
-                                    {/* {doctor.user.emailVerified ? (
-                                        <Button
-                                            variant="outline"
-                                            onClick={() =>
-                                                handleReview(doctor.id)
-                                            }
-                                            disabled={
-                                                doctor.verificationStatus !==
-                                                "PENDING"
-                                            }
-                                        >
-                                            Review
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            disabled
-                                            variant="outline"
-                                            // onClick={() => handleReview(doctor.id)}
-                                        >
-                                            Not Verified
-                                        </Button>
-                                    )} */}
-                                    <Button>View</Button>
+                                    <ScheduleActions schedule={schedule} />
                                 </TableCell>
                             </TableRow>
                         ))}
