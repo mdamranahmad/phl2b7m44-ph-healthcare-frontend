@@ -13,11 +13,17 @@ const DoctorList = () => {
     return (
         <div className="max-w-7xl mx-auto my-10">
             <div className="flex gap-3">
-                {doctorList.map((doctor) => (
-                    <Link key={doctor.id} href={`doctors/${doctor.id}`}>
-                        {doctor.name}
-                    </Link>
-                ))}
+                {doctorList.map((doctor) => {
+                    const params = new URLSearchParams({ id: doctor.id });
+                    return (
+                        <Link
+                            key={doctor.id}
+                            href={`doctors/details?${params.toString()}`}
+                        >
+                            {doctor.name}
+                        </Link>
+                    );
+                })}
             </div>
         </div>
     );
