@@ -1,4 +1,22 @@
 import { getAllPublicDoctors, getPublicDoctorProfile } from "@/api";
+import DoctorBooking from "@/components/modules/doctors/doctor-booking";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import {
+    ArrowLeft,
+    BriefcaseBusiness,
+    GraduationCap,
+    ScrollText,
+    Stethoscope,
+    Wallet,
+} from "lucide-react";
+import Link from "next/link";
 
 export async function generateStaticParams() {
     const limit = 100;
@@ -30,17 +48,86 @@ const DoctorDetailsPage = async ({
     const doctor = data?.data;
 
     if (!doctor) {
-        return <p>No Doctor Found With This Id!</p>;
+        return (
+            <div className="py-10 text-center">
+                <p className="py-10 text-center text-muted-foreground">
+                    No doctors found
+                </p>
+                <Button
+                    variant="link"
+                    render={<Link href="/doctor"></Link>}
+                    nativeButton={false}
+                >
+                    Back to doctors
+                </Button>
+            </div>
+        );
     }
 
     return (
-        <div>
-            <p>Name: {doctor.name}</p>
-            <p>Specialization: {doctor.specialization}</p>
-            <p>
-                Fee:{" "}
-                {doctor.consultationFee ? `${doctor.consultationFee} BDT` : "-"}
-            </p>
+        <div className="mx-auto max-w-2xl space-y-8">
+            <div>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mb-4"
+                    render={<Link href="/doctor" />}
+                    nativeButton={false}
+                >
+                    <ArrowLeft /> Back to doctors
+                </Button>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-2xl">
+                            {doctor.name}
+                        </CardTitle>
+                        <CardDescription className="flex items-center gap-1.5">
+                            <Stethoscope className="size-4" />
+                            {doctor.specialization}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3 text-muted-foreground">
+                        <p className="flex items-center gap-2">
+                            <GraduationCap className="size-4 shrink-0" />
+                            {doctor.qualifications}
+                        </p>
+                        <p className="flex items-center gap-2">
+                            <BriefcaseBusiness className="size-4 shrink-0" />
+                            {doctor.experienceYears}{" "}
+                            {doctor.experienceYears === 1 ? "year" : "years"} of
+                            experience
+                        </p>
+                        <p className="flex items-center gap-2">
+                            <ScrollText className="size-4 shrink-0" />
+                            License No: {doctor.licenseNumber}
+                        </p>
+                        {doctor.consultationFee !== null && (
+                            <p className="flex items-center gap-2">
+                                <Wallet className="size-4 shrink-0" />
+                                Consultation fee: BDT {doctor.consultationFee}
+                            </p>
+                        )}
+                        {doctor.bio && (
+                            <div className="pt-2">
+                                <p className="font-medium text-muted-foreground">
+                                    About
+                                </p>
+                                <p>{doctor.bio}</p>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+            <div className="space-y-4">
+                <div>
+                    <h2 className="text-lg font-semibold">Book Appointment</h2>
+                    <p className="text-sm text-muted-foreground">
+                        Today&apos;s available slots. Booking redirects to Bkash
+                        payment.
+                    </p>
+                </div>
+                <DoctorBooking doctorId={doctor.id} />
+            </div>
         </div>
     );
 };

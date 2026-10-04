@@ -63,3 +63,11 @@ export function getAllPublicDoctors(params: IPublicDoctorParams) {
 export function getPublicDoctorProfile(doctorId: string) {
     return apiClient<IApiResponse<IPublicDoctorProfile>>(`/doctor/${doctorId}`);
 }
+
+export function getTodayScheduleByDoctor(params: {
+    doctorId?: string;
+    page?: number;
+    limit?: number;
+}) {
+    return apiClient(`/schedule/todays-schedule`, { params });
+}
