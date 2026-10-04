@@ -2,9 +2,11 @@ import {
     applyAsDoctor,
     approveDoctor,
     getAllDoctors,
+    getAllPublicDoctors,
+    getPublicDoctorProfile,
     verifyDoctorAccount,
 } from "@/api";
-import { IDoctorParams } from "@/types";
+import { IDoctorParams, IPublicDoctorParams } from "@/types";
 import {
     useMutation,
     useQuery,
@@ -31,6 +33,21 @@ export function useGetAllDoctors(params: IDoctorParams) {
     });
 }
 
+export function useGetAllPublicDoctors(params: IPublicDoctorParams) {
+    return useQuery({
+        queryKey: ["doctor", "public", params],
+        queryFn: () => getAllPublicDoctors(params),
+    });
+}
+
+export function usePublicDoctorProfile(doctorId: string) {
+    return useQuery({
+        queryKey: ["doctor", "public", doctorId],
+        queryFn: () => getPublicDoctorProfile(doctorId),
+        enabled: !!doctorId,
+    });
+}
+
 export function useSuspenseGetAllDoctors(params: IDoctorParams) {
     return useSuspenseQuery({
         queryKey: ["doctors", params], // cache tag for fetched data
@@ -44,7 +61,7 @@ export function useApproveDoctor() {
     return useMutation({
         mutationFn: approveDoctor,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["doctors"] });  // To revalidate / update cached data
+            queryClient.invalidateQueries({ queryKey: ["doctors"] }); // To revalidate / update cached data
         },
     });
 }

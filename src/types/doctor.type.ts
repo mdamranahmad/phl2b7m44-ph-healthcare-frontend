@@ -64,3 +64,38 @@ export interface IApproveDoctorPayload {
     verificationStatus: "APPROVED" | "REJECTED";
     rejectionReason?: string;
 }
+
+export interface IGetAllDoctorResponse {
+    success: boolean;
+    statusCode: number;
+    message: string;
+    data: IPublicDoctorProfile[];
+    meta: IMeta;
+}
+
+export interface IPublicDoctorProfile {
+    id: string;
+    name: string;
+    specialization: string;
+    licenseNumber: string;
+    qualifications: string;
+    experienceYears: number;
+    bio?: string;
+    consultationFee: string;
+    createdAt: string;
+}
+
+export interface IMeta {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+}
+
+export interface IPublicDoctorParams {
+    page?: number;
+    limit?: number;
+    searchTerm?: string;
+    sortBy?: string;
+    sortOrder?: "desc" | "asc";
+}

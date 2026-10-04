@@ -5,6 +5,8 @@ import {
     IDoctor,
     IDoctorApplicationPayload,
     IDoctorParams,
+    IPublicDoctorParams,
+    IPublicDoctorProfile,
 } from "@/types/doctor.type";
 
 // A function fetch apply as doctor api
@@ -47,9 +49,17 @@ export function approveDoctor(payload: IApproveDoctorPayload) {
     }); // implement type safety at api fetch level
 }
 
-// A function to fetch get all doctors api for admin and super admin
-// export function getAllDoctors(params: IDoctorParams) {
-//     return apiClient<IApiResponse<IDoctor[]>>("/doctor/all-doctors", {
-//         params,
-//     }); // implement type safety at api fetch level
-// }
+// A function to fetch get all doctors api for public
+export function getAllPublicDoctors(params: IPublicDoctorParams) {
+    return apiClient<IApiResponse<IPublicDoctorProfile[]>>(
+        "/doctor/all-doctors-public",
+        {
+            params,
+        },
+    ); // implement type safety at api fetch level
+}
+
+// A function to fetch get all doctors api for public
+export function getPublicDoctorProfile(doctorId: string) {
+    return apiClient<IApiResponse<IPublicDoctorProfile>>(`/doctor/${doctorId}`);
+}
