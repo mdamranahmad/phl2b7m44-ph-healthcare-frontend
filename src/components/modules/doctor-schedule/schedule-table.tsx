@@ -43,7 +43,7 @@ const ScheduleTable = ({
 
     const schedules: ISchedule[] = data?.data || [];
 
-    console.log({ schedules });
+    // console.log({ schedules });
 
     if (schedules.length === 0) {
         return (
