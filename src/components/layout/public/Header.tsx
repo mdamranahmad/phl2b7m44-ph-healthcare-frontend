@@ -19,7 +19,7 @@ export default function Header() {
         SUPER_ADMIN: "/admin",
         ADMIN: "/admin",
         DOCTOR: "/doctor",
-        PATIENT: "/patient",
+        PATIENT: "/dashboard",
     };
 
     // While mutation, we were mutating data, and destructured mutation from useMutation, in case of Query, data and isLoading will be enough to use

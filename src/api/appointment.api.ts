@@ -14,3 +14,7 @@ export function bookAppointment(payload: IBookAppointmentPayload) {
         },
     );
 }
+
+export function getMyAppointments(params: { page?: number; limit?: number }) {
+    return apiClient("/appointment/my-appointments", { params });
+}

@@ -154,3 +154,6 @@ const DoctorBooking = ({ doctorId }: { doctorId: string }) => {
 };
 
 export default DoctorBooking;
+
+// http://localhost:3000/dashboard/my-appointment?status=failue
+// http://localhost:3000/dashboard/my-appointment?status=success
