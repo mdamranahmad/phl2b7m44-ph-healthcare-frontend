@@ -13,7 +13,7 @@ export default function PhHealthcareLogo({
     title = "PH Healthcare Logo",
     ...props
 }: PhHealthcareLogoProps) {
-    const titleId = `logo-title-${Math.random().toString(36).substring(2, 9)}`;
+    const titleId = `logo-title-ph-healthcare`;
 
     return (
         <svg

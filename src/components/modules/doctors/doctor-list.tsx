@@ -90,14 +90,16 @@ function PublicDoctorGrid({
                         <CardFooter className="gap-2">
                             <Button
                                 className="flex-1"
+                                nativeButton={false}
                                 render={
                                     <Link href={`/doctors/${doctor.id}`}>
                                         See Details
                                     </Link>
                                 }
-                            >
+                            />
+                            {/* <Link type="button" href={`/doctors/${doctor.id}`}>
                                 See Details
-                            </Button>
+                            </Link> */}
                         </CardFooter>
                     </Card>
                 ))}
